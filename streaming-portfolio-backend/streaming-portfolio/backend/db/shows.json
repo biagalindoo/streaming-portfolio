@@ -1,0 +1,14 @@
+[
+  {
+    "id": "demo-show-1",
+    "type": "show",
+    "title": "Demo Show",
+    "description": "Uma s\u00e9rie de demonstra\u00e7\u00e3o para o portf\u00f3lio.",
+    "coverUrl": "https://placehold.co/600x900?text=Demo+Show",
+    "videoUrl": "",
+    "showId": null,
+    "season": null,
+    "episodeNumber": null,
+    "createdAt": "2025-08-16T00:00:00.000Z"
+  }
+]
