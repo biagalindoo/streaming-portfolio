@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { useToast } from './Toast';
+import RatingSystem from './RatingSystem';
 
 const MovieDetail = () => {
     const { id } = useParams();
@@ -229,6 +230,11 @@ const MovieDetail = () => {
                     {movie.type === 'show' && (
                         <ShowEpisodes parentId={movie.id} />
                     )}
+                    
+                    {/* Rating System */}
+                    <div style={{ marginTop: '32px' }}>
+                        <RatingSystem itemId={movie.id} />
+                    </div>
                 </div>
             </div>
         </div>
