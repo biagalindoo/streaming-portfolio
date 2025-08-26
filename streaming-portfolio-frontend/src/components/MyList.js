@@ -23,10 +23,12 @@ const MyList = () => {
         if (!catRes.ok) throw new Error('Falha ao carregar catálogo');
         const favData = await favRes.json();
         const catData = await catRes.json();
-        if (active) {
-          setFavoriteIds(Array.isArray(favData.favorites) ? favData.favorites : []);
-          setCatalog(Array.isArray(catData) ? catData : []);
-        }
+                 if (active) {
+           setFavoriteIds(Array.isArray(favData.favorites) ? favData.favorites : []);
+           // Filtrar apenas shows e movies (não episódios)
+           const filteredCatalog = Array.isArray(catData) ? catData.filter(item => item.type === 'show' || item.type === 'movie') : [];
+           setCatalog(filteredCatalog);
+         }
       } catch (e) {
         if (active) setError(e.message);
       } finally {
