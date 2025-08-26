@@ -27,13 +27,16 @@ const MovieDetail = () => {
 
     return (
         <div>
-            <h1>{movie.title}</h1>
-            {movie.posterUrl && (
-                <img src={movie.posterUrl} alt={movie.title} style={{ maxWidth: 240, borderRadius: 8 }} />
-            )}
-            <p>{movie.description}</p>
-            <p><strong>Ano:</strong> {movie.year}</p>
-            <p><strong>Gêneros:</strong> {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}</p>
+            <div className="detail">
+                {movie.posterUrl && (
+                    <img className="poster" src={movie.posterUrl} alt={movie.title} />
+                )}
+                <div>
+                    <h1 style={{ marginTop: 0 }}>{movie.title}</h1>
+                    <div className="meta">{movie.year} • {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}</div>
+                    <p style={{ lineHeight: 1.7 }}>{movie.description}</p>
+                </div>
+            </div>
         </div>
     );
 };
