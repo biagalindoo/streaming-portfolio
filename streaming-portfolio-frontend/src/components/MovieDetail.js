@@ -159,7 +159,7 @@ const MovieDetail = () => {
                         backdropFilter: 'blur(10px)'
                     }}>
                         <h3 style={{ color: 'white', marginBottom: '16px', fontSize: '1.2rem' }}>Detalhes</h3>
-                        <div style={{ color: '#8b93a7', fontSize: '0.9rem', lineHeight: 1.6' }}>
+                        <div style={{ color: '#8b93a7', fontSize: '0.9rem', lineHeight: 1.6 }}>
                             <div style={{ marginBottom: '12px' }}>
                                 <strong style={{ color: 'white' }}>Tipo:</strong> {movie.type === 'movie' ? 'Filme' : 'Série'}
                             </div>
