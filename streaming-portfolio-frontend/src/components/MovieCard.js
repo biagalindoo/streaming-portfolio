@@ -97,6 +97,7 @@ const MovieCard = ({ id, title, posterUrl, year }) => {
 
                 {/* Play Button on Hover */}
                 <button
+                    className="play-button"
                     onClick={handleWatch}
                     style={{
                         position: 'absolute',
