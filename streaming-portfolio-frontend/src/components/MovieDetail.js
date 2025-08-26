@@ -47,49 +47,144 @@ const MovieDetail = () => {
     };
 
     return (
-        <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 32, alignItems: 'start' }}>
-                {movie.coverUrl && (
-                    <img 
-                        src={movie.coverUrl} 
-                        alt={movie.title} 
-                        style={{ 
-                            width: '100%', 
-                            borderRadius: 16, 
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            boxShadow: '0 8px 24px rgba(0,0,0,0.3)'
-                        }} 
-                    />
-                )}
-                <div>
-                    <h1 style={{ marginTop: 0, fontSize: '2.5rem', marginBottom: '0.5rem', color: 'white' }}>{movie.title}</h1>
-                    <div style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: '#8b93a7' }}>
-                        {movie.year || ''} {movie.genres ? `• ${Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}` : ''}
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            {/* Hero Section */}
+            <div style={{ 
+                position: 'relative', 
+                height: '500px', 
+                borderRadius: '20px', 
+                overflow: 'hidden',
+                marginBottom: '40px',
+                background: `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%), url(${movie.coverUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                alignItems: 'flex-end',
+                padding: '40px'
+            }}>
+                <div style={{ 
+                    background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%)',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '60%'
+                }} />
+                <div style={{ position: 'relative', zIndex: 2, color: 'white' }}>
+                    <h1 style={{ 
+                        fontSize: '3.5rem', 
+                        marginBottom: '1rem', 
+                        fontWeight: 700,
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}>
+                        {movie.title}
+                    </h1>
+                    <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '20px', 
+                        marginBottom: '1.5rem',
+                        fontSize: '1.1rem'
+                    }}>
+                        <span style={{ color: '#00d4ff', fontWeight: 600 }}>{movie.year || '2024'}</span>
+                        <span style={{ color: '#8b93a7' }}>•</span>
+                        <span style={{ color: '#8b93a7' }}>{movie.type === 'movie' ? 'Filme' : 'Série'}</span>
+                        <span style={{ color: '#8b93a7' }}>•</span>
+                        <span style={{ color: '#8b93a7' }}>{movie.type === 'movie' ? '2h 15min' : '8 Episódios'}</span>
+                        {movie.genres && (
+                            <>
+                                <span style={{ color: '#8b93a7' }}>•</span>
+                                <span style={{ color: '#8b93a7' }}>
+                                    {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}
+                                </span>
+                            </>
+                        )}
                     </div>
-                    <p style={{ lineHeight: 1.8, fontSize: '1.1rem', marginBottom: '2rem', color: 'white' }}>{movie.description}</p>
-                    {user && (
-                        <button 
-                            onClick={addFav} 
-                            style={{ 
-                                fontSize: '1rem', 
-                                padding: '12px 24px',
-                                height: 44,
-                                borderRadius: 10,
-                                border: 'none',
-                                background: '#6c5ce7',
-                                color: 'white',
-                                fontWeight: 600,
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Adicionar aos favoritos
+                    <p style={{ 
+                        lineHeight: 1.6, 
+                        fontSize: '1.2rem', 
+                        marginBottom: '2rem',
+                        maxWidth: '600px',
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                    }}>
+                        {movie.description}
+                    </p>
+                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                        <button style={{ 
+                            background: '#00d4ff',
+                            color: '#000',
+                            border: 'none',
+                            padding: '16px 32px',
+                            borderRadius: '8px',
+                            fontSize: '1.1rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            ▶ Assistir
                         </button>
+                        {user && (
+                            <button 
+                                onClick={addFav} 
+                                style={{ 
+                                    background: 'rgba(255,255,255,0.1)',
+                                    color: 'white',
+                                    border: '1px solid rgba(255,255,255,0.3)',
+                                    padding: '16px 24px',
+                                    borderRadius: '8px',
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    backdropFilter: 'blur(10px)'
+                                }}
+                            >
+                                + Minha Lista
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Content Section */}
+            <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 40 }}>
+                {/* Sidebar */}
+                <div>
+                    <div style={{ 
+                        background: 'rgba(255,255,255,0.05)', 
+                        borderRadius: '16px', 
+                        padding: '24px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        backdropFilter: 'blur(10px)'
+                    }}>
+                        <h3 style={{ color: 'white', marginBottom: '16px', fontSize: '1.2rem' }}>Detalhes</h3>
+                        <div style={{ color: '#8b93a7', fontSize: '0.9rem', lineHeight: 1.6' }}>
+                            <div style={{ marginBottom: '12px' }}>
+                                <strong style={{ color: 'white' }}>Tipo:</strong> {movie.type === 'movie' ? 'Filme' : 'Série'}
+                            </div>
+                            <div style={{ marginBottom: '12px' }}>
+                                <strong style={{ color: 'white' }}>Ano:</strong> {movie.year || '2024'}
+                            </div>
+                            <div style={{ marginBottom: '12px' }}>
+                                <strong style={{ color: 'white' }}>Duração:</strong> {movie.type === 'movie' ? '2h 15min' : '8 Episódios'}
+                            </div>
+                            {movie.genres && (
+                                <div style={{ marginBottom: '12px' }}>
+                                    <strong style={{ color: 'white' }}>Gêneros:</strong> {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main Content */}
+                <div>
+                    {movie.type === 'show' && (
+                        <ShowEpisodes parentId={movie.id} />
                     )}
                 </div>
             </div>
-            {movie.type === 'show' && (
-                <ShowEpisodes parentId={movie.id} />
-            )}
         </div>
     );
 };
@@ -100,6 +195,7 @@ const ShowEpisodes = ({ parentId }) => {
     const [episodes, setEpisodes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedSeason, setSelectedSeason] = useState(1);
 
     useEffect(() => {
         setLoading(true);
@@ -109,83 +205,233 @@ const ShowEpisodes = ({ parentId }) => {
             .then(data => {
                 const eps = data.filter(i => i.type === 'episode' && i.showId === parentId);
                 setEpisodes(eps);
+                if (eps.length > 0) {
+                    setSelectedSeason(Math.min(...eps.map(e => e.season || 1)));
+                }
             })
             .catch(err => setError(err.message))
             .finally(() => setLoading(false));
     }, [parentId]);
 
-    if (loading) return <p>Carregando episódios...</p>;
-    if (error) return <p>Erro: {error}</p>;
+    if (loading) return (
+        <div style={{ textAlign: 'center', padding: '40px', color: 'white' }}>
+            <div style={{ fontSize: '1.2rem' }}>Carregando episódios...</div>
+        </div>
+    );
+    if (error) return (
+        <div style={{ textAlign: 'center', padding: '40px', color: '#ff6b6b' }}>
+            <div style={{ fontSize: '1.2rem' }}>Erro: {error}</div>
+        </div>
+    );
     if (!episodes.length) return null;
 
     const bySeason = episodes.reduce((acc, ep) => {
-        const s = ep.season || 0;
+        const s = ep.season || 1;
         if (!acc[s]) acc[s] = [];
         acc[s].push(ep);
         return acc;
     }, {});
 
+    const seasons = Object.keys(bySeason).sort((a,b) => Number(a) - Number(b));
+    const currentSeasonEpisodes = bySeason[selectedSeason] || [];
+
     return (
-        <div style={{ marginTop: 32 }}>
-            <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'white' }}>Temporadas e episódios</h2>
-            {Object.keys(bySeason).sort((a,b)=>Number(a)-Number(b)).map(season => (
-                <div key={season} style={{ marginBottom: 32 }}>
-                    <h3 style={{ 
-                        marginBottom: 16, 
-                        fontSize: '1.5rem', 
-                        color: '#00d4ff',
-                        borderBottom: '2px solid #00d4ff',
-                        paddingBottom: '8px',
-                        display: 'inline-block'
-                    }}>
-                        Temporada {season}
-                    </h3>
-                    <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-                        {bySeason[season].sort((a,b)=>a.episodeNumber-b.episodeNumber).map(ep => (
-                            <div key={ep.id} style={{ 
-                                background: 'rgba(255,255,255,0.02)', 
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: 12,
-                                overflow: 'hidden',
-                                transition: 'all 0.3s ease'
+        <div>
+            {/* Season Selector */}
+            <div style={{ 
+                background: 'rgba(255,255,255,0.05)', 
+                borderRadius: '16px', 
+                padding: '24px',
+                marginBottom: '32px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(10px)'
+            }}>
+                <h2 style={{ 
+                    fontSize: '2rem', 
+                    marginBottom: '24px', 
+                    color: 'white',
+                    fontWeight: 600
+                }}>
+                    Episódios
+                </h2>
+                
+                {/* Season Tabs */}
+                <div style={{ 
+                    display: 'flex', 
+                    gap: '8px', 
+                    marginBottom: '24px',
+                    flexWrap: 'wrap'
+                }}>
+                    {seasons.map(season => (
+                        <button
+                            key={season}
+                            onClick={() => setSelectedSeason(Number(season))}
+                            style={{
+                                background: selectedSeason === Number(season) ? '#00d4ff' : 'rgba(255,255,255,0.1)',
+                                color: selectedSeason === Number(season) ? '#000' : 'white',
+                                border: 'none',
+                                padding: '12px 20px',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            Temporada {season}
+                            <span style={{ 
+                                background: selectedSeason === Number(season) ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)',
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                                fontSize: '0.8rem',
+                                fontWeight: 500
                             }}>
+                                {bySeason[season].length}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Season Info */}
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '16px',
+                    color: '#8b93a7',
+                    fontSize: '0.9rem'
+                }}>
+                    <span>Temporada {selectedSeason}</span>
+                    <span>•</span>
+                    <span>{currentSeasonEpisodes.length} episódios</span>
+                    <span>•</span>
+                    <span>Duração média: 45min</span>
+                </div>
+            </div>
+
+            {/* Episodes Grid */}
+            <div style={{ 
+                display: 'grid', 
+                gap: '16px'
+            }}>
+                {currentSeasonEpisodes
+                    .sort((a,b) => a.episodeNumber - b.episodeNumber)
+                    .map((ep, index) => (
+                        <div key={ep.id} style={{ 
+                            background: 'rgba(255,255,255,0.03)', 
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            transition: 'all 0.3s ease',
+                            display: 'flex',
+                            cursor: 'pointer'
+                        }}>
+                            {/* Episode Thumbnail */}
+                            <div style={{ width: '200px', flexShrink: 0 }}>
                                 {ep.coverUrl ? (
-                                    <img src={ep.coverUrl} alt={ep.title} style={{ width: '100%', height: 200, objectFit: 'cover' }} />
+                                    <img 
+                                        src={ep.coverUrl} 
+                                        alt={ep.title} 
+                                        style={{ 
+                                            width: '100%', 
+                                            height: '120px', 
+                                            objectFit: 'cover' 
+                                        }} 
+                                    />
                                 ) : (
                                     <div style={{ 
-                                        height: 200, 
+                                        height: '120px', 
                                         background: 'linear-gradient(45deg, #6c5ce7, #00d4ff)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         color: 'white',
-                                        fontSize: '1.2rem'
+                                        fontSize: '1rem',
+                                        fontWeight: 600
                                     }}>
                                         Ep {ep.episodeNumber}
                                     </div>
                                 )}
-                                <div style={{ padding: '16px' }}>
+                            </div>
+
+                            {/* Episode Info */}
+                            <div style={{ 
+                                padding: '20px', 
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between'
+                            }}>
+                                <div>
                                     <div style={{ 
-                                        fontSize: '1.1rem', 
-                                        marginBottom: '8px',
-                                        fontWeight: 600,
-                                        color: 'white'
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '12px',
+                                        marginBottom: '8px'
                                     }}>
-                                        Ep {ep.episodeNumber}: {ep.title}
+                                        <span style={{ 
+                                            fontSize: '1.1rem', 
+                                            fontWeight: 600,
+                                            color: 'white'
+                                        }}>
+                                            {ep.episodeNumber}. {ep.title}
+                                        </span>
+                                        <span style={{ 
+                                            color: '#8b93a7', 
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            45min
+                                        </span>
                                     </div>
-                                    <div style={{ 
-                                        fontSize: '0.9rem', 
+                                    <p style={{ 
+                                        fontSize: '0.95rem', 
                                         lineHeight: 1.5,
-                                        color: '#8b93a7'
+                                        color: '#8b93a7',
+                                        margin: 0
                                     }}>
                                         {ep.description}
-                                    </div>
+                                    </p>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div style={{ 
+                                    display: 'flex', 
+                                    gap: '12px',
+                                    marginTop: '16px'
+                                }}>
+                                    <button style={{
+                                        background: '#00d4ff',
+                                        color: '#000',
+                                        border: 'none',
+                                        padding: '8px 16px',
+                                        borderRadius: '6px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}>
+                                        ▶ Assistir
+                                    </button>
+                                    <button style={{
+                                        background: 'rgba(255,255,255,0.1)',
+                                        color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        padding: '8px 16px',
+                                        borderRadius: '6px',
+                                        fontSize: '0.9rem',
+                                        cursor: 'pointer'
+                                    }}>
+                                        + Lista
+                                    </button>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
-            ))}
+                        </div>
+                    ))}
+            </div>
         </div>
     );
 };
