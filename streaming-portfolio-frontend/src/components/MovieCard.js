@@ -5,31 +5,128 @@ import { Link } from 'react-router-dom';
 const MovieCard = ({ id, title, posterUrl, year }) => {
     return (
         <Link to={`/movies/${id}`} style={{ 
-            background: 'rgba(255,255,255,0.03)', 
-            border: '1px solid rgba(255,255,255,0.08)', 
-            borderRadius: 12, 
-            overflow: 'hidden', 
             textDecoration: 'none',
             color: 'white',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            display: 'block',
+            height: '100%',
+            ':hover': {
+                transform: 'scale(1.02)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
+            }
         }}>
-            {posterUrl ? (
-                <img src={posterUrl} alt={title} style={{ width: '100%', height: 300, objectFit: 'cover' }} />
-            ) : (
-                <div style={{ 
-                    height: 300, 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    background: '#0c1222',
-                    color: '#8b93a7'
+            <div style={{ 
+                position: 'relative',
+                height: '100%',
+                overflow: 'hidden'
+            }}>
+                {/* Poster */}
+                {posterUrl ? (
+                    <img 
+                        src={posterUrl} 
+                        alt={title} 
+                        style={{ 
+                            width: '100%', 
+                            height: 400, 
+                            objectFit: 'cover',
+                            transition: 'transform 0.3s ease'
+                        }} 
+                    />
+                ) : (
+                    <div style={{ 
+                        height: 400, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                        color: '#8b93a7',
+                        fontSize: '1rem'
+                    }}>
+                        Sem imagem
+                    </div>
+                )}
+
+                {/* Overlay on Hover */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%)',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    padding: '20px'
                 }}>
-                    Sem imagem
+                    <div>
+                        <div style={{ 
+                            fontSize: '1.1rem', 
+                            fontWeight: 600, 
+                            marginBottom: '8px',
+                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                        }}>
+                            {title}
+                        </div>
+                        <div style={{ 
+                            fontSize: '0.9rem', 
+                            color: '#8b93a7',
+                            textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                        }}>
+                            {year || '2024'} • 2h 15min
+                        </div>
+                    </div>
                 </div>
-            )}
-            <div style={{ padding: 16 }}>
-                <div style={{ fontSize: 15, marginBottom: 8, fontWeight: 600 }}>{title}</div>
-                <div style={{ fontSize: 13, color: '#8b93a7' }}>{year || '—'}</div>
+
+                {/* Play Button on Hover */}
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    background: 'rgba(0,212,255,0.9)',
+                    color: '#000',
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    backdropFilter: 'blur(10px)'
+                }}>
+                    ▶
+                </div>
+
+                {/* Info at Bottom */}
+                <div style={{ 
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%)',
+                    padding: '20px',
+                    color: 'white'
+                }}>
+                    <div style={{ 
+                        fontSize: '1rem', 
+                        fontWeight: 600, 
+                        marginBottom: '4px',
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                    }}>
+                        {title}
+                    </div>
+                    <div style={{ 
+                        fontSize: '0.85rem', 
+                        color: '#8b93a7',
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
+                    }}>
+                        {year || '2024'} • 2h 15min
+                    </div>
+                </div>
             </div>
         </Link>
     );
