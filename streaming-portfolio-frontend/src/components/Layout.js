@@ -6,15 +6,18 @@ import { AuthContext } from '../context/AuthContext';
 const Layout = () => {
     const { user, logout } = useContext(AuthContext);
     return (
-        <div>
-            <header className="header">
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Link to="/" className="brand">
+        <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: '100vh' }}>
+            <aside style={{ background: '#0b1020', borderRight: '1px solid #19223a' }}>
+                <div className="container" style={{ padding: 20 }}>
+                    <Link to="/" className="brand" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span className="brand-dot" />
-                        Streaming<span style={{ color: 'var(--accent)' }}>Portfolio</span>
+                        <span>Streaming<span style={{ color: 'var(--accent)' }}>Portfolio</span></span>
                     </Link>
-                    <nav className="nav">
+                    <nav className="nav" style={{ display: 'grid', marginTop: 20, gap: 8 }}>
                         <NavLink to="/" end>Início</NavLink>
+                        <NavLink to="/?type=show">Séries</NavLink>
+                        <NavLink to="/?type=movie">Filmes</NavLink>
+                        <NavLink to="/my-list">Minha lista</NavLink>
                         {user ? (
                             <>
                                 <NavLink to="/user">Minha conta</NavLink>
@@ -28,6 +31,12 @@ const Layout = () => {
                         )}
                     </nav>
                 </div>
+            </aside>
+            <div>
+            <header className="header" style={{ borderBottom: '1px solid #19223a' }}>
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div />
+                </div>
             </header>
             <main className="container" style={{ paddingTop: 24 }}>
                 <Outlet />
@@ -35,6 +44,7 @@ const Layout = () => {
             <footer className="footer">
                 <div className="container">© {new Date().getFullYear()} Streaming Portfolio</div>
             </footer>
+            </div>
         </div>
     );
 };

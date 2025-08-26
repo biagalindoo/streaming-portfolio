@@ -1,6 +1,8 @@
 // src/components/MovieDetail.js
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import { useToast } from './Toast';
 
 const MovieDetail = () => {
     const { id } = useParams();
@@ -11,7 +13,7 @@ const MovieDetail = () => {
     useEffect(() => {
         setLoading(true);
         setError(null);
-        fetch(`/api/movies/${id}`)
+        fetch(`/api/catalog/${id}`)
             .then((response) => {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return response.json();
@@ -25,14 +27,24 @@ const MovieDetail = () => {
     if (error) return <p>Erro: {error}</p>;
     if (!movie) return <p>Não encontrado.</p>;
 
-    const addFav = () => {
+    const { authHeaders } = useContext(AuthContext);
+    const toast = useToast();
+    const addFav = async () => {
         try {
-            const raw = localStorage.getItem('favorites');
-            const list = raw ? JSON.parse(raw) : [];
-            const exists = list.find((f) => f.id === movie.id);
-            const next = exists ? list : [...list, { id: movie.id, title: movie.title, year: movie.year }];
-            localStorage.setItem('favorites', JSON.stringify(next));
-        } catch {}
+            const res = await fetch('/api/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                body: JSON.stringify({ itemId: movie.id }),
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.error || 'Falha ao favoritar');
+            }
+            toast.success('Adicionado aos favoritos!');
+        } catch (e) {
+            console.error(e);
+            toast.error(e.message || 'Falha ao favoritar');
+        }
     };
 
     return (

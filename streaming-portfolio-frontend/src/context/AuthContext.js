@@ -4,6 +4,7 @@ import React, { createContext, useCallback, useEffect, useMemo, useState } from 
 export const AuthContext = createContext({
     user: null,
     token: null,
+    authHeaders: () => ({}),
     login: async () => {},
     signup: async () => {},
     logout: () => {},
@@ -29,6 +30,10 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ user, token }));
     }, [user, token]);
+
+    const authHeaders = useCallback(() => {
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }, [token]);
 
     const login = useCallback(async ({ email, password }) => {
         const res = await fetch('/api/auth/login', {
@@ -60,7 +65,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem(STORAGE_KEY);
     }, []);
 
-    const value = useMemo(() => ({ user, token, login, signup, logout }), [user, token, login, signup, logout]);
+    const value = useMemo(() => ({ user, token, authHeaders, login, signup, logout }), [user, token, authHeaders, login, signup, logout]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

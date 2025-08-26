@@ -1,6 +1,9 @@
 // src/components/Catalog.js
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MovieCard from './MovieCard';
+import { useToast } from './Toast';
+import { AuthContext } from '../context/AuthContext';
 
 const FAV_KEY = 'favorites';
 
@@ -9,6 +12,9 @@ const Catalog = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState('');
+
+    const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('/api/catalog')
@@ -23,21 +29,47 @@ const Catalog = () => {
 
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase();
-        if (!q) return series;
-        return series.filter(s => `${s.title} ${s.year || ''}`.toLowerCase().includes(q));
-    }, [series, query]);
+        const params = new URLSearchParams(location.search);
+        const type = params.get('type');
+        let base = series;
+        if (type === 'show' || type === 'movie') {
+            base = base.filter(s => s.type === type);
+        }
+        if (!q) return base;
+        return base.filter(s => `${s.title} ${s.year || ''}`.toLowerCase().includes(q));
+    }, [series, query, location.search]);
 
     if (loading) return <p>Carregando...</p>;
     if (error) return <p>Erro: {error}</p>;
 
-    const toggleFav = (item) => {
+    const toast = useToast();
+    const { authHeaders } = useContext(AuthContext);
+    const toggleFav = async (item) => {
         try {
-            const raw = localStorage.getItem(FAV_KEY);
-            const list = raw ? JSON.parse(raw) : [];
-            const exists = list.find((f) => f.id === item.id);
-            const next = exists ? list.filter((f) => f.id !== item.id) : [...list, item];
-            localStorage.setItem(FAV_KEY, JSON.stringify(next));
-        } catch {}
+            // Try add; if conflict semantics needed we'd query first, here we toggle by attempting delete on failure
+            const addRes = await fetch('/api/favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                body: JSON.stringify({ itemId: item.id }),
+            });
+            if (addRes.ok) {
+                toast.success('Adicionado aos favoritos!');
+                return;
+            }
+            // if already exists or other, try delete
+            const delRes = await fetch(`/api/favorites/${item.id}`, {
+                method: 'DELETE',
+                headers: { ...authHeaders() },
+            });
+            if (delRes.ok || delRes.status === 204) {
+                toast.success('Removido dos favoritos');
+                return;
+            }
+            const err = await addRes.json().catch(() => ({}));
+            throw new Error(err.error || 'Não foi possível atualizar favoritos');
+        } catch (e) {
+            toast.error(e.message || 'Erro ao atualizar favoritos');
+        }
     };
 
     return (
@@ -51,6 +83,16 @@ const Catalog = () => {
                     onChange={(e) => setQuery(e.target.value)}
                     className="input"
                 />
+                <select className="input" value={new URLSearchParams(location.search).get('type') || ''} onChange={(e) => {
+                    const v = e.target.value;
+                    const params = new URLSearchParams(location.search);
+                    if (v) params.set('type', v); else params.delete('type');
+                    navigate({ search: params.toString() });
+                }}>
+                    <option value="">Todos</option>
+                    <option value="show">Séries</option>
+                    <option value="movie">Filmes</option>
+                </select>
             </div>
             <div className="grid">
                 {filtered.map((item) => (
