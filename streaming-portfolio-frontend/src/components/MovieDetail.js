@@ -54,10 +54,16 @@ const MovieDetail = () => {
                     <img className="poster" src={movie.coverUrl} alt={movie.title} />
                 )}
                 <div>
-                    <h1 style={{ marginTop: 0 }}>{movie.title}</h1>
-                    <div className="meta">{movie.year || ''} {movie.genres ? `• ${Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}` : ''}</div>
-                    <p style={{ lineHeight: 1.7 }}>{movie.description}</p>
-                    <button className="button" onClick={addFav}>Adicionar aos favoritos</button>
+                    <h1 style={{ marginTop: 0, fontSize: '2.5rem', marginBottom: '0.5rem' }}>{movie.title}</h1>
+                    <div className="meta" style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>
+                        {movie.year || ''} {movie.genres ? `• ${Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}` : ''}
+                    </div>
+                    <p style={{ lineHeight: 1.8, fontSize: '1.1rem', marginBottom: '2rem' }}>{movie.description}</p>
+                    {user && (
+                        <button className="button" onClick={addFav} style={{ fontSize: '1rem', padding: '12px 24px' }}>
+                            Adicionar aos favoritos
+                        </button>
+                    )}
                 </div>
             </div>
             {movie.type === 'show' && (

@@ -6,7 +6,7 @@ import { AuthContext } from '../context/AuthContext';
 const Layout = () => {
     const { user, logout } = useContext(AuthContext);
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr 220px', minHeight: '100vh' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: '100vh' }}>
             <aside style={{ background: '#0b1020', borderRight: '1px solid #19223a' }}>
                 <div className="container" style={{ padding: 20 }}>
                     <Link to="/" className="brand" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -18,24 +18,42 @@ const Layout = () => {
                         <NavLink to="/?type=show">Séries</NavLink>
                         <NavLink to="/?type=movie">Filmes</NavLink>
                         <NavLink to="/my-list">Minha lista</NavLink>
-                        {user ? (
-                            <>
-                                <NavLink to="/user">Minha conta</NavLink>
-                                <a href="#" onClick={(e) => { e.preventDefault(); logout(); }}>Sair</a>
-                            </>
-                        ) : (
-                            <>
-                                <NavLink to="/login">Login</NavLink>
-                                <NavLink to="/signup">Cadastro</NavLink>
-                            </>
-                        )}
                     </nav>
                 </div>
             </aside>
             <div>
             <header className="header" style={{ borderBottom: '1px solid #19223a' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 16px' }}>
                     <div />
+                    {user && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <NavLink to="/user" style={{ 
+                                width: 40, 
+                                height: 40, 
+                                borderRadius: '50%', 
+                                background: 'var(--primary)', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                fontSize: 16,
+                                fontWeight: 600
+                            }}>
+                                {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                            </NavLink>
+                            <button 
+                                onClick={logout}
+                                style={{ 
+                                    background: 'none', 
+                                    border: 'none', 
+                                    color: 'var(--muted)', 
+                                    cursor: 'pointer',
+                                    fontSize: 14
+                                }}
+                            >
+                                Sair
+                            </button>
+                        </div>
+                    )}
                 </div>
             </header>
             <main className="container" style={{ paddingTop: 24 }}>
@@ -45,23 +63,6 @@ const Layout = () => {
                 <div className="container">© {new Date().getFullYear()} Streaming Portfolio</div>
             </footer>
             </div>
-            <aside style={{ background: '#0b1020', borderLeft: '1px solid #19223a' }}>
-                <div className="container" style={{ padding: 20, display: 'grid', gap: 10 }}>
-                    {user ? (
-                        <>
-                            <div style={{ color: 'var(--muted)' }}>Logado como</div>
-                            <div style={{ fontWeight: 600 }}>{user.name || user.email}</div>
-                            <NavLink to="/user">Minha conta</NavLink>
-                            <a href="#" onClick={(e) => { e.preventDefault(); logout(); }}>Sair</a>
-                        </>
-                    ) : (
-                        <>
-                            <NavLink to="/login">Login</NavLink>
-                            <NavLink to="/signup">Cadastro</NavLink>
-                        </>
-                    )}
-                </div>
-            </aside>
         </div>
     );
 };

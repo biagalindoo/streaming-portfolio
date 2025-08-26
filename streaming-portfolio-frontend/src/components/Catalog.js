@@ -96,9 +96,13 @@ const Catalog = () => {
             </div>
             <div className="grid">
                 {filtered.map((item) => (
-                    <div key={item.id}>
+                    <div key={item.id} style={{ position: 'relative' }}>
                         <MovieCard id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} />
-                        <button className="button" style={{ width: '100%', marginTop: 8 }} onClick={() => toggleFav(item)}>Favoritar</button>
+                        {user && (
+                            <button className="button" style={{ width: '100%', marginTop: 8 }} onClick={() => toggleFav(item)}>
+                                Favoritar
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>
