@@ -144,7 +144,7 @@ const MovieCard = ({ id, title, posterUrl, year, duration }) => {
                         color: '#8b93a7',
                         textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                     }}>
-                        {year || '2024'} • 2h 15min
+                        {year || '2024'} • {duration || '2h 15min'}
                     </div>
                 </div>
             </div>
