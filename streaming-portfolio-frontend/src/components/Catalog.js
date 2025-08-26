@@ -46,7 +46,7 @@ const Catalog = () => {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return response.json();
             })
-            .then(data => setFavorites(data.map(fav => fav.itemId)))
+            .then(data => setFavorites(data.favorites || []))
             .catch(err => console.error('Erro ao carregar favoritos:', err))
             .finally(() => setFavoritesLoading(false));
     }, [user, authHeaders]);

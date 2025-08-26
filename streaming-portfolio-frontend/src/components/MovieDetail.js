@@ -38,7 +38,7 @@ const MovieDetail = () => {
                 return response.json();
             })
             .then(data => {
-                const favorited = data.some(fav => fav.itemId === movie.id);
+                const favorited = data.favorites && data.favorites.includes(movie.id);
                 setIsFavorited(favorited);
             })
             .catch(err => console.error('Erro ao verificar favoritos:', err));
