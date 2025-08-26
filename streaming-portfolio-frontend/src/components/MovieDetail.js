@@ -9,6 +9,8 @@ const MovieDetail = () => {
     const [movie, setMovie] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { user, authHeaders } = useContext(AuthContext);
+    const toast = useToast();
 
     useEffect(() => {
         setLoading(true);
@@ -26,9 +28,6 @@ const MovieDetail = () => {
     if (loading) return <p>Carregando...</p>;
     if (error) return <p>Erro: {error}</p>;
     if (!movie) return <p>Não encontrado.</p>;
-
-    const { authHeaders } = useContext(AuthContext);
-    const toast = useToast();
     const addFav = async () => {
         try {
             const res = await fetch('/api/favorites', {

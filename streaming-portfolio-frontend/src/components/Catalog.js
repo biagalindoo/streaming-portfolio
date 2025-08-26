@@ -43,7 +43,7 @@ const Catalog = () => {
     if (error) return <p>Erro: {error}</p>;
 
     const toast = useToast();
-    const { authHeaders } = useContext(AuthContext);
+    const { user, authHeaders } = useContext(AuthContext);
     const toggleFav = async (item) => {
         try {
             // Try add; if conflict semantics needed we'd query first, here we toggle by attempting delete on failure
@@ -74,32 +74,66 @@ const Catalog = () => {
 
     return (
         <div>
-            <h1>Explorar</h1>
-            <div className="searchbar">
+            <h1 style={{ color: 'white', fontSize: '2rem', marginBottom: '1rem' }}>Explorar</h1>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 30 }}>
                 <input
                     type="text"
                     placeholder="Buscar por título..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="input"
+                    style={{ 
+                        height: 44, 
+                        borderRadius: 10, 
+                        border: '1px solid rgba(255,255,255,0.1)', 
+                        background: 'rgba(255,255,255,0.05)', 
+                        color: 'white', 
+                        padding: '0 16px',
+                        fontSize: 14
+                    }}
                 />
-                <select className="input" value={new URLSearchParams(location.search).get('type') || ''} onChange={(e) => {
-                    const v = e.target.value;
-                    const params = new URLSearchParams(location.search);
-                    if (v) params.set('type', v); else params.delete('type');
-                    navigate({ search: params.toString() });
-                }}>
+                <select 
+                    value={new URLSearchParams(location.search).get('type') || ''} 
+                    onChange={(e) => {
+                        const v = e.target.value;
+                        const params = new URLSearchParams(location.search);
+                        if (v) params.set('type', v); else params.delete('type');
+                        navigate({ search: params.toString() });
+                    }}
+                    style={{ 
+                        height: 44, 
+                        borderRadius: 10, 
+                        border: '1px solid rgba(255,255,255,0.1)', 
+                        background: 'rgba(255,255,255,0.05)', 
+                        color: 'white', 
+                        padding: '0 16px',
+                        fontSize: 14
+                    }}
+                >
                     <option value="">Todos</option>
                     <option value="show">Séries</option>
                     <option value="movie">Filmes</option>
                 </select>
             </div>
-            <div className="grid">
+            <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
                 {filtered.map((item) => (
                     <div key={item.id} style={{ position: 'relative' }}>
                         <MovieCard id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} />
                         {user && (
-                            <button className="button" style={{ width: '100%', marginTop: 8 }} onClick={() => toggleFav(item)}>
+                            <button 
+                                onClick={() => toggleFav(item)}
+                                style={{ 
+                                    width: '100%', 
+                                    marginTop: 8,
+                                    height: 44,
+                                    borderRadius: 10,
+                                    border: 'none',
+                                    background: '#6c5ce7',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    fontSize: 14
+                                }}
+                            >
                                 Favoritar
                             </button>
                         )}
