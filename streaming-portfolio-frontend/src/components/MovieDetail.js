@@ -48,18 +48,40 @@ const MovieDetail = () => {
 
     return (
         <div>
-            <div className="detail">
+            <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 32, alignItems: 'start' }}>
                 {movie.coverUrl && (
-                    <img className="poster" src={movie.coverUrl} alt={movie.title} />
+                    <img 
+                        src={movie.coverUrl} 
+                        alt={movie.title} 
+                        style={{ 
+                            width: '100%', 
+                            borderRadius: 16, 
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.3)'
+                        }} 
+                    />
                 )}
                 <div>
-                    <h1 style={{ marginTop: 0, fontSize: '2.5rem', marginBottom: '0.5rem' }}>{movie.title}</h1>
-                    <div className="meta" style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>
+                    <h1 style={{ marginTop: 0, fontSize: '2.5rem', marginBottom: '0.5rem', color: 'white' }}>{movie.title}</h1>
+                    <div style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: '#8b93a7' }}>
                         {movie.year || ''} {movie.genres ? `• ${Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}` : ''}
                     </div>
-                    <p style={{ lineHeight: 1.8, fontSize: '1.1rem', marginBottom: '2rem' }}>{movie.description}</p>
+                    <p style={{ lineHeight: 1.8, fontSize: '1.1rem', marginBottom: '2rem', color: 'white' }}>{movie.description}</p>
                     {user && (
-                        <button className="button" onClick={addFav} style={{ fontSize: '1rem', padding: '12px 24px' }}>
+                        <button 
+                            onClick={addFav} 
+                            style={{ 
+                                fontSize: '1rem', 
+                                padding: '12px 24px',
+                                height: 44,
+                                borderRadius: 10,
+                                border: 'none',
+                                background: '#6c5ce7',
+                                color: 'white',
+                                fontWeight: 600,
+                                cursor: 'pointer'
+                            }}
+                        >
                             Adicionar aos favoritos
                         </button>
                     )}
@@ -105,32 +127,34 @@ const ShowEpisodes = ({ parentId }) => {
 
     return (
         <div style={{ marginTop: 32 }}>
-            <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem' }}>Temporadas e episódios</h2>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'white' }}>Temporadas e episódios</h2>
             {Object.keys(bySeason).sort((a,b)=>Number(a)-Number(b)).map(season => (
                 <div key={season} style={{ marginBottom: 32 }}>
                     <h3 style={{ 
                         marginBottom: 16, 
                         fontSize: '1.5rem', 
-                        color: 'var(--accent)',
-                        borderBottom: '2px solid var(--accent)',
+                        color: '#00d4ff',
+                        borderBottom: '2px solid #00d4ff',
                         paddingBottom: '8px',
                         display: 'inline-block'
                     }}>
                         Temporada {season}
                     </h3>
-                    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+                    <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
                         {bySeason[season].sort((a,b)=>a.episodeNumber-b.episodeNumber).map(ep => (
-                            <div key={ep.id} className="card" style={{ 
+                            <div key={ep.id} style={{ 
                                 background: 'rgba(255,255,255,0.02)', 
                                 border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: 12,
+                                overflow: 'hidden',
                                 transition: 'all 0.3s ease'
                             }}>
                                 {ep.coverUrl ? (
-                                    <img src={ep.coverUrl} alt={ep.title} style={{ height: 200, objectFit: 'cover' }} />
+                                    <img src={ep.coverUrl} alt={ep.title} style={{ width: '100%', height: 200, objectFit: 'cover' }} />
                                 ) : (
                                     <div style={{ 
                                         height: 200, 
-                                        background: 'linear-gradient(45deg, var(--primary), var(--accent))',
+                                        background: 'linear-gradient(45deg, #6c5ce7, #00d4ff)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -140,18 +164,19 @@ const ShowEpisodes = ({ parentId }) => {
                                         Ep {ep.episodeNumber}
                                     </div>
                                 )}
-                                <div className="card-body" style={{ padding: '16px' }}>
-                                    <div className="card-title" style={{ 
+                                <div style={{ padding: '16px' }}>
+                                    <div style={{ 
                                         fontSize: '1.1rem', 
                                         marginBottom: '8px',
-                                        fontWeight: 600
+                                        fontWeight: 600,
+                                        color: 'white'
                                     }}>
                                         Ep {ep.episodeNumber}: {ep.title}
                                     </div>
-                                    <div className="card-meta" style={{ 
+                                    <div style={{ 
                                         fontSize: '0.9rem', 
                                         lineHeight: 1.5,
-                                        color: 'var(--muted)'
+                                        color: '#8b93a7'
                                     }}>
                                         {ep.description}
                                     </div>
