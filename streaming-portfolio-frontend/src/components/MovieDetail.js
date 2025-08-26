@@ -244,7 +244,7 @@ const MovieDetail = () => {
 export default MovieDetail;
 
 const ShowEpisodes = ({ parentId }) => {
-    const [episodes, setEpisodes] = useState([]);
+    const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedSeason, setSelectedSeason] = useState(1);
@@ -252,13 +252,12 @@ const ShowEpisodes = ({ parentId }) => {
     useEffect(() => {
         setLoading(true);
         setError(null);
-        fetch('/api/catalog')
-            .then(r => { if (!r.ok) throw new Error('Falha ao carregar episódios'); return r.json(); })
+        fetch(`/api/catalog/${parentId}`)
+            .then(r => { if (!r.ok) throw new Error('Falha ao carregar série'); return r.json(); })
             .then(data => {
-                const eps = data.filter(i => i.type === 'episode' && i.showId === parentId);
-                setEpisodes(eps);
-                if (eps.length > 0) {
-                    setSelectedSeason(Math.min(...eps.map(e => e.season || 1)));
+                setMovie(data);
+                if (data.seasons && data.seasons.length > 0) {
+                    setSelectedSeason(data.seasons[0].number);
                 }
             })
             .catch(err => setError(err.message))
@@ -267,7 +266,7 @@ const ShowEpisodes = ({ parentId }) => {
 
     if (loading) return (
         <div style={{ textAlign: 'center', padding: '40px', color: 'white' }}>
-            <div style={{ fontSize: '1.2rem' }}>Carregando episódios...</div>
+            <div style={{ fontSize: '1.2rem' }}>Carregando temporadas...</div>
         </div>
     );
     if (error) return (
@@ -275,17 +274,10 @@ const ShowEpisodes = ({ parentId }) => {
             <div style={{ fontSize: '1.2rem' }}>Erro: {error}</div>
         </div>
     );
-    if (!episodes.length) return null;
+    if (!movie || !movie.seasons || movie.seasons.length === 0) return null;
 
-    const bySeason = episodes.reduce((acc, ep) => {
-        const s = ep.season || 1;
-        if (!acc[s]) acc[s] = [];
-        acc[s].push(ep);
-        return acc;
-    }, {});
-
-    const seasons = Object.keys(bySeason).sort((a,b) => Number(a) - Number(b));
-    const currentSeasonEpisodes = bySeason[selectedSeason] || [];
+    const seasons = movie.seasons;
+    const currentSeason = seasons.find(s => s.number === selectedSeason);
 
     return (
         <div>
@@ -316,11 +308,11 @@ const ShowEpisodes = ({ parentId }) => {
                 }}>
                     {seasons.map(season => (
                         <button
-                            key={season}
-                            onClick={() => setSelectedSeason(Number(season))}
+                            key={season.number}
+                            onClick={() => setSelectedSeason(season.number)}
                             style={{
-                                background: selectedSeason === Number(season) ? '#00d4ff' : 'rgba(255,255,255,0.1)',
-                                color: selectedSeason === Number(season) ? '#000' : 'white',
+                                background: selectedSeason === season.number ? '#00d4ff' : 'rgba(255,255,255,0.1)',
+                                color: selectedSeason === season.number ? '#000' : 'white',
                                 border: 'none',
                                 padding: '12px 20px',
                                 borderRadius: '8px',
@@ -333,15 +325,15 @@ const ShowEpisodes = ({ parentId }) => {
                                 gap: '8px'
                             }}
                         >
-                            Temporada {season}
+                            {season.title}
                             <span style={{ 
-                                background: selectedSeason === Number(season) ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)',
+                                background: selectedSeason === season.number ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)',
                                 padding: '2px 8px',
                                 borderRadius: '12px',
                                 fontSize: '0.8rem',
                                 fontWeight: 500
                             }}>
-                                {bySeason[season].length}
+                                {season.episodes}
                             </span>
                         </button>
                     ))}
@@ -355,11 +347,11 @@ const ShowEpisodes = ({ parentId }) => {
                     color: '#8b93a7',
                     fontSize: '0.9rem'
                 }}>
-                    <span>Temporada {selectedSeason}</span>
+                    <span>{currentSeason?.title}</span>
                     <span>•</span>
-                    <span>{currentSeasonEpisodes.length} episódios</span>
+                    <span>{currentSeason?.episodes} episódios</span>
                     <span>•</span>
-                    <span>Duração média: 45min</span>
+                    <span>Duração média: {movie.duration}</span>
                 </div>
             </div>
 
@@ -368,10 +360,10 @@ const ShowEpisodes = ({ parentId }) => {
                 display: 'grid', 
                 gap: '16px'
             }}>
-                {currentSeasonEpisodes
-                    .sort((a,b) => a.episodeNumber - b.episodeNumber)
-                    .map((ep, index) => (
-                        <div key={ep.id} style={{ 
+                {Array.from({ length: currentSeason?.episodes || 0 }, (_, index) => {
+                    const episodeNumber = index + 1;
+                    return (
+                        <div key={`episode-${episodeNumber}`} style={{
                             background: 'rgba(255,255,255,0.03)', 
                             border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '12px',
@@ -382,30 +374,18 @@ const ShowEpisodes = ({ parentId }) => {
                         }}>
                             {/* Episode Thumbnail */}
                             <div style={{ width: '200px', flexShrink: 0 }}>
-                                {ep.coverUrl ? (
-                                    <img 
-                                        src={ep.coverUrl} 
-                                        alt={ep.title} 
-                                        style={{ 
-                                            width: '100%', 
-                                            height: '120px', 
-                                            objectFit: 'cover' 
-                                        }} 
-                                    />
-                                ) : (
-                                    <div style={{ 
-                                        height: '120px', 
-                                        background: 'linear-gradient(45deg, #6c5ce7, #00d4ff)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: 'white',
-                                        fontSize: '1rem',
-                                        fontWeight: 600
-                                    }}>
-                                        Ep {ep.episodeNumber}
-                                    </div>
-                                )}
+                                <div style={{ 
+                                    height: '120px', 
+                                    background: 'linear-gradient(45deg, #6c5ce7, #00d4ff)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    fontSize: '1rem',
+                                    fontWeight: 600
+                                }}>
+                                    Ep {episodeNumber}
+                                </div>
                             </div>
 
                             {/* Episode Info */}
@@ -428,13 +408,13 @@ const ShowEpisodes = ({ parentId }) => {
                                             fontWeight: 600,
                                             color: 'white'
                                         }}>
-                                            {ep.episodeNumber}. {ep.title}
+                                            Episódio {episodeNumber}
                                         </span>
                                         <span style={{ 
                                             color: '#8b93a7', 
                                             fontSize: '0.9rem'
                                         }}>
-                                            {ep.duration || '45min'}
+                                            {movie.duration}
                                         </span>
                                     </div>
                                     <p style={{ 
@@ -443,7 +423,7 @@ const ShowEpisodes = ({ parentId }) => {
                                         color: '#8b93a7',
                                         margin: 0
                                     }}>
-                                        {ep.description}
+                                        Episódio {episodeNumber} da {currentSeason?.title}
                                     </p>
                                 </div>
 
@@ -455,11 +435,7 @@ const ShowEpisodes = ({ parentId }) => {
                                 }}>
                                     <button 
                                         onClick={() => {
-                                            if (ep.videoUrl) {
-                                                window.open(ep.videoUrl, '_blank');
-                                            } else {
-                                                alert(`🎬 Assistindo episódio: ${ep.title}`);
-                                            }
+                                            alert(`🎬 Assistindo episódio ${episodeNumber} da ${currentSeason?.title}`);
                                         }}
                                         style={{
                                             background: '#00d4ff',
@@ -491,7 +467,8 @@ const ShowEpisodes = ({ parentId }) => {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    );
+                })}
             </div>
         </div>
     );

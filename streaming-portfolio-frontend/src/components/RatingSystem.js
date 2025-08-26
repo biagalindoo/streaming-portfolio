@@ -39,11 +39,6 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
     }, [itemId, user]);
 
     const handleRatingSubmit = async () => {
-        if (!user) {
-            toast.error('Faça login para avaliar');
-            return;
-        }
-
         if (rating === 0) {
             toast.error('Selecione uma avaliação');
             return;
@@ -54,8 +49,7 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
             const response = await fetch('/api/ratings', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    ...authHeaders()
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     itemId,
@@ -90,13 +84,10 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
     };
 
     const handleRatingDelete = async () => {
-        if (!user) return;
-
         setLoading(true);
         try {
             const response = await fetch(`/api/ratings/${itemId}`, {
-                method: 'DELETE',
-                headers: { ...authHeaders() }
+                method: 'DELETE'
             });
 
             if (response.ok) {
@@ -175,7 +166,7 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
             </div>
 
             {/* Avaliação do usuário */}
-            {user ? (
+            {true ? (
                 <div style={{ marginBottom: '20px' }}>
                     <div style={{ marginBottom: '12px' }}>
                         <span style={{ color: 'white', fontSize: '1rem' }}>
