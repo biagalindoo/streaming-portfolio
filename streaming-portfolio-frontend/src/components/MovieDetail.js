@@ -47,22 +47,42 @@ const MovieDetail = () => {
     if (loading) return <p>Carregando...</p>;
     if (error) return <p>Erro: {error}</p>;
     if (!movie) return <p>Não encontrado.</p>;
-    const addFav = async () => {
+    const toggleFav = async () => {
         try {
-            const res = await fetch('/api/favorites', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', ...authHeaders() },
-                body: JSON.stringify({ itemId: movie.id }),
-            });
-            if (!res.ok) {
-                const data = await res.json().catch(() => ({}));
-                throw new Error(data.error || 'Falha ao favoritar');
+            if (isFavorited) {
+                // Remover dos favoritos
+                const res = await fetch(`/api/favorites/${movie.id}`, {
+                    method: 'DELETE',
+                    headers: { ...authHeaders() },
+                });
+                if (res.ok || res.status === 204) {
+                    setIsFavorited(false);
+                    toast.success('Removido dos favoritos');
+                } else {
+                    throw new Error('Falha ao remover dos favoritos');
+                }
+            } else {
+                // Adicionar aos favoritos
+                const res = await fetch('/api/favorites', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                    body: JSON.stringify({ itemId: movie.id }),
+                });
+                if (res.ok) {
+                    setIsFavorited(true);
+                    toast.success('Adicionado aos favoritos!');
+                } else {
+                    throw new Error('Falha ao adicionar aos favoritos');
+                }
             }
-            toast.success('Adicionado aos favoritos!');
         } catch (e) {
             console.error(e);
-            toast.error(e.message || 'Falha ao favoritar');
+            toast.error(e.message || 'Falha ao atualizar favoritos');
         }
+    };
+
+    const handleWatch = () => {
+        alert(`🎬 Assistindo: ${movie.title}`);
     };
 
     return (
@@ -129,26 +149,29 @@ const MovieDetail = () => {
                         {movie.description}
                     </p>
                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                        <button style={{ 
-                            background: '#00d4ff',
-                            color: '#000',
-                            border: 'none',
-                            padding: '16px 32px',
-                            borderRadius: '8px',
-                            fontSize: '1.1rem',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                        }}>
+                        <button 
+                            onClick={handleWatch}
+                            style={{ 
+                                background: '#00d4ff',
+                                color: '#000',
+                                border: 'none',
+                                padding: '16px 32px',
+                                borderRadius: '8px',
+                                fontSize: '1.1rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
                             ▶ Assistir
                         </button>
                         {user && (
                             <button 
-                                onClick={addFav} 
+                                onClick={toggleFav} 
                                 style={{ 
-                                    background: 'rgba(255,255,255,0.1)',
+                                    background: isFavorited ? '#ff6b6b' : 'rgba(255,255,255,0.1)',
                                     color: 'white',
                                     border: '1px solid rgba(255,255,255,0.3)',
                                     padding: '16px 24px',
@@ -159,7 +182,7 @@ const MovieDetail = () => {
                                     backdropFilter: 'blur(10px)'
                                 }}
                             >
-                                + Minha Lista
+                                {isFavorited ? '✓ Na Lista' : '+ Minha Lista'}
                             </button>
                         )}
                     </div>
