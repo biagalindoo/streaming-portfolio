@@ -73,73 +73,160 @@ const Catalog = () => {
     };
 
     return (
-        <div>
-            <h1 style={{ color: 'white', fontSize: '2rem', marginBottom: '1rem' }}>Explorar</h1>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 30 }}>
-                <input
-                    type="text"
-                    placeholder="Buscar por título..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    style={{ 
-                        height: 44, 
-                        borderRadius: 10, 
-                        border: '1px solid rgba(255,255,255,0.1)', 
-                        background: 'rgba(255,255,255,0.05)', 
-                        color: 'white', 
-                        padding: '0 16px',
-                        fontSize: 14
-                    }}
-                />
-                <select 
-                    value={new URLSearchParams(location.search).get('type') || ''} 
-                    onChange={(e) => {
-                        const v = e.target.value;
-                        const params = new URLSearchParams(location.search);
-                        if (v) params.set('type', v); else params.delete('type');
-                        navigate({ search: params.toString() });
-                    }}
-                    style={{ 
-                        height: 44, 
-                        borderRadius: 10, 
-                        border: '1px solid rgba(255,255,255,0.1)', 
-                        background: 'rgba(255,255,255,0.05)', 
-                        color: 'white', 
-                        padding: '0 16px',
-                        fontSize: 14
-                    }}
-                >
-                    <option value="">Todos</option>
-                    <option value="show">Séries</option>
-                    <option value="movie">Filmes</option>
-                </select>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            {/* Header Section */}
+            <div style={{ 
+                background: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%)',
+                borderRadius: '20px',
+                padding: '40px',
+                marginBottom: '40px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(10px)'
+            }}>
+                <h1 style={{ 
+                    color: 'white', 
+                    fontSize: '3rem', 
+                    marginBottom: '1rem',
+                    fontWeight: 700,
+                    textAlign: 'center'
+                }}>
+                    Explorar
+                </h1>
+                <p style={{ 
+                    color: '#8b93a7', 
+                    fontSize: '1.1rem', 
+                    textAlign: 'center',
+                    marginBottom: '32px'
+                }}>
+                    Descubra filmes e séries incríveis
+                </p>
+                
+                {/* Search and Filter */}
+                <div style={{ 
+                    display: 'flex', 
+                    gap: 16, 
+                    justifyContent: 'center',
+                    flexWrap: 'wrap'
+                }}>
+                    <input
+                        type="text"
+                        placeholder="Buscar por título..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        style={{ 
+                            height: 48, 
+                            borderRadius: 12, 
+                            border: '1px solid rgba(255,255,255,0.2)', 
+                            background: 'rgba(255,255,255,0.1)', 
+                            color: 'white', 
+                            padding: '0 20px',
+                            fontSize: 16,
+                            minWidth: '300px',
+                            backdropFilter: 'blur(10px)'
+                        }}
+                    />
+                    <select 
+                        value={new URLSearchParams(location.search).get('type') || ''} 
+                        onChange={(e) => {
+                            const v = e.target.value;
+                            const params = new URLSearchParams(location.search);
+                            if (v) params.set('type', v); else params.delete('type');
+                            navigate({ search: params.toString() });
+                        }}
+                        style={{ 
+                            height: 48, 
+                            borderRadius: 12, 
+                            border: '1px solid rgba(255,255,255,0.2)', 
+                            background: 'rgba(255,255,255,0.1)', 
+                            color: 'white', 
+                            padding: '0 20px',
+                            fontSize: 16,
+                            backdropFilter: 'blur(10px)'
+                        }}
+                    >
+                        <option value="">Todos os tipos</option>
+                        <option value="show">Séries</option>
+                        <option value="movie">Filmes</option>
+                    </select>
+                </div>
             </div>
-            <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+
+            {/* Results Count */}
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginBottom: '24px',
+                padding: '0 8px'
+            }}>
+                <div style={{ color: '#8b93a7', fontSize: '1rem' }}>
+                    {filtered.length} {filtered.length === 1 ? 'resultado' : 'resultados'} encontrado{filtered.length !== 1 ? 's' : ''}
+                </div>
+                <div style={{ color: '#8b93a7', fontSize: '0.9rem' }}>
+                    {new URLSearchParams(location.search).get('type') ? 
+                        `Filtrando por: ${new URLSearchParams(location.search).get('type') === 'show' ? 'Séries' : 'Filmes'}` : 
+                        'Mostrando todos'
+                    }
+                </div>
+            </div>
+
+            {/* Content Grid */}
+            <div style={{ 
+                display: 'grid', 
+                gap: 24, 
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))'
+            }}>
                 {filtered.map((item) => (
-                    <div key={item.id} style={{ position: 'relative' }}>
+                    <div key={item.id} style={{ 
+                        position: 'relative',
+                        background: 'rgba(255,255,255,0.03)',
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        transition: 'all 0.3s ease',
+                        backdropFilter: 'blur(10px)'
+                    }}>
                         <MovieCard id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} />
                         {user && (
-                            <button 
-                                onClick={() => toggleFav(item)}
-                                style={{ 
-                                    width: '100%', 
-                                    marginTop: 8,
-                                    height: 44,
-                                    borderRadius: 10,
-                                    border: 'none',
-                                    background: '#6c5ce7',
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                    fontSize: 14
-                                }}
-                            >
-                                Favoritar
-                            </button>
+                            <div style={{ padding: '16px' }}>
+                                <button 
+                                    onClick={() => toggleFav(item)}
+                                    style={{ 
+                                        width: '100%', 
+                                        height: 44,
+                                        borderRadius: 10,
+                                        border: 'none',
+                                        background: '#00d4ff',
+                                        color: '#000',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        fontSize: 14,
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                >
+                                    + Minha Lista
+                                </button>
+                            </div>
                         )}
                     </div>
                 ))}
             </div>
+
+            {/* Empty State */}
+            {filtered.length === 0 && !loading && (
+                <div style={{ 
+                    textAlign: 'center', 
+                    padding: '60px 20px',
+                    color: '#8b93a7'
+                }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '16px' }}>
+                        Nenhum resultado encontrado
+                    </div>
+                    <div style={{ fontSize: '1rem' }}>
+                        Tente ajustar os filtros ou a busca
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
