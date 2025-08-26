@@ -53,7 +53,7 @@ const MyList = () => {
       ) : (
         <div className="grid">
                      {items.map((item) => (
-             <MovieCard key={item.id} id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} />
+             <MovieCard key={item.id} id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} duration={item.duration} videoUrl={item.videoUrl} />
            ))}
         </div>
       )}
