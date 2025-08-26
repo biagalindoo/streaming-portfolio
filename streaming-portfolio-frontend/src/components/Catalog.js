@@ -271,15 +271,15 @@ const Catalog = () => {
                                         height: 44,
                                         borderRadius: 10,
                                         border: 'none',
-                                        background: '#00d4ff',
-                                        color: '#000',
+                                        background: favorites.includes(item.id) ? '#ff6b6b' : '#00d4ff',
+                                        color: favorites.includes(item.id) ? 'white' : '#000',
                                         fontWeight: 600,
                                         cursor: 'pointer',
                                         fontSize: 14,
                                         transition: 'all 0.2s ease'
                                     }}
                                 >
-                                    + Minha Lista
+                                    {favorites.includes(item.id) ? '✓ Na Lista' : '+ Minha Lista'}
                                 </button>
                             </div>
                         )}
