@@ -29,15 +29,16 @@ const Login = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1>Login</h1>
-            {error && <p style={{ color: 'red' }}>Erro: {error}</p>}
+        <form onSubmit={handleSubmit} className="auth-form">
+            <h1>Entrar</h1>
+            {error && <p className="error">Erro: {error}</p>}
             <input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="input"
             />
             <input
                 type="password"
@@ -45,8 +46,9 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="input"
             />
-            <button type="submit">Entrar</button>
+            <button type="submit" className="button">Entrar</button>
         </form>
     );
 };

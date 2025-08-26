@@ -42,16 +42,17 @@ const Signup = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="auth-form">
             <h1>Cadastro</h1>
-            {error && <p style={{ color: 'red' }}>Erro: {error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
+            {error && <p className="error">Erro: {error}</p>}
+            {success && <p className="success">{success}</p>}
             <input
                 type="text"
                 placeholder="Nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                className="input"
             />
             <input
                 type="email"
@@ -59,6 +60,7 @@ const Signup = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="input"
             />
             <input
                 type="password"
@@ -66,6 +68,7 @@ const Signup = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="input"
             />
             <input
                 type="password"
@@ -73,8 +76,9 @@ const Signup = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                className="input"
             />
-            <button type="submit">Criar conta</button>
+            <button type="submit" className="button">Criar conta</button>
         </form>
     );
 };
