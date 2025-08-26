@@ -2,12 +2,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const MovieCard = ({ id, title, posterUrl, year, duration }) => {
+const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl }) => {
     const handleWatch = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        // Aqui você pode adicionar lógica para reproduzir o vídeo
-        alert(`🎬 Assistindo: ${title}`);
+        if (videoUrl) {
+            window.open(videoUrl, '_blank');
+        } else {
+            alert(`🎬 Assistindo: ${title}`);
+        }
     };
 
     return (

@@ -82,7 +82,11 @@ const MovieDetail = () => {
     };
 
     const handleWatch = () => {
-        alert(`🎬 Assistindo: ${movie.title}`);
+        if (movie.videoUrl) {
+            window.open(movie.videoUrl, '_blank');
+        } else {
+            alert(`🎬 Assistindo: ${movie.title}`);
+        }
     };
 
     return (
@@ -129,7 +133,7 @@ const MovieDetail = () => {
                         <span style={{ color: '#8b93a7' }}>•</span>
                         <span style={{ color: '#8b93a7' }}>{movie.type === 'movie' ? 'Filme' : 'Série'}</span>
                         <span style={{ color: '#8b93a7' }}>•</span>
-                        <span style={{ color: '#8b93a7' }}>{movie.type === 'movie' ? '2h 15min' : '8 Episódios'}</span>
+                        <span style={{ color: '#8b93a7' }}>{movie.duration || (movie.type === 'movie' ? '2h 15min' : '8 Episódios')}</span>
                         {movie.genres && (
                             <>
                                 <span style={{ color: '#8b93a7' }}>•</span>
@@ -209,7 +213,7 @@ const MovieDetail = () => {
                                 <strong style={{ color: 'white' }}>Ano:</strong> {movie.year || '2024'}
                             </div>
                             <div style={{ marginBottom: '12px' }}>
-                                <strong style={{ color: 'white' }}>Duração:</strong> {movie.type === 'movie' ? '2h 15min' : '8 Episódios'}
+                                <strong style={{ color: 'white' }}>Duração:</strong> {movie.duration || (movie.type === 'movie' ? '2h 15min' : '8 Episódios')}
                             </div>
                             {movie.genres && (
                                 <div style={{ marginBottom: '12px' }}>
@@ -424,7 +428,7 @@ const ShowEpisodes = ({ parentId }) => {
                                             color: '#8b93a7', 
                                             fontSize: '0.9rem'
                                         }}>
-                                            45min
+                                            {ep.duration || '45min'}
                                         </span>
                                     </div>
                                     <p style={{ 
@@ -444,7 +448,13 @@ const ShowEpisodes = ({ parentId }) => {
                                     marginTop: '16px'
                                 }}>
                                     <button 
-                                        onClick={() => alert(`🎬 Assistindo episódio: ${ep.title}`)}
+                                        onClick={() => {
+                                            if (ep.videoUrl) {
+                                                window.open(ep.videoUrl, '_blank');
+                                            } else {
+                                                alert(`🎬 Assistindo episódio: ${ep.title}`);
+                                            }
+                                        }}
                                         style={{
                                             background: '#00d4ff',
                                             color: '#000',

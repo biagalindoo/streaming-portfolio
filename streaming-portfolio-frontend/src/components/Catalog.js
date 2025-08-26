@@ -260,7 +260,7 @@ const Catalog = () => {
                         transition: 'all 0.3s ease',
                         backdropFilter: 'blur(10px)'
                     }}>
-                        <MovieCard id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} duration={item.duration} />
+                        <MovieCard id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} duration={item.duration} videoUrl={item.videoUrl} />
                         {user && (
                             <div style={{ padding: '16px' }}>
                                 <button 
