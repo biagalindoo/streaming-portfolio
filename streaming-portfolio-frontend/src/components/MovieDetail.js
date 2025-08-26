@@ -443,19 +443,22 @@ const ShowEpisodes = ({ parentId }) => {
                                     gap: '12px',
                                     marginTop: '16px'
                                 }}>
-                                    <button style={{
-                                        background: '#00d4ff',
-                                        color: '#000',
-                                        border: 'none',
-                                        padding: '8px 16px',
-                                        borderRadius: '6px',
-                                        fontSize: '0.9rem',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '6px'
-                                    }}>
+                                    <button 
+                                        onClick={() => alert(`🎬 Assistindo episódio: ${ep.title}`)}
+                                        style={{
+                                            background: '#00d4ff',
+                                            color: '#000',
+                                            border: 'none',
+                                            padding: '8px 16px',
+                                            borderRadius: '6px',
+                                            fontSize: '0.9rem',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px'
+                                        }}
+                                    >
                                         ▶ Assistir
                                     </button>
                                     <button style={{
