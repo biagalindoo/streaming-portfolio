@@ -3,6 +3,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const MovieCard = ({ id, title, posterUrl, year }) => {
+    const handleWatch = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Aqui você pode adicionar lógica para reproduzir o vídeo
+        alert(`🎬 Assistindo: ${title}`);
+    };
+
     return (
         <Link to={`/movies/${id}`} style={{ 
             textDecoration: 'none',
