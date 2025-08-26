@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl }) => {
+const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) => {
     const handleWatch = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -148,6 +148,11 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl }) => {
                         textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                     }}>
                         {year || '2024'} • {duration || '2h 15min'}
+                        {rating && (
+                            <span style={{ marginLeft: '8px', color: '#ffd700' }}>
+                                ★ {rating.toFixed(1)}
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>
