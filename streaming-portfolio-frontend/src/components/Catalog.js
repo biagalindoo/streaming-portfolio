@@ -29,6 +29,26 @@ const Catalog = () => {
             .finally(() => setLoading(false));
     }, []);
 
+    // Carregar favoritos do usuário
+    useEffect(() => {
+        if (!user) {
+            setFavorites([]);
+            setFavoritesLoading(false);
+            return;
+        }
+
+        fetch('/api/favorites', {
+            headers: { ...authHeaders() }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            })
+            .then(data => setFavorites(data.map(fav => fav.itemId)))
+            .catch(err => console.error('Erro ao carregar favoritos:', err))
+            .finally(() => setFavoritesLoading(false));
+    }, [user, authHeaders]);
+
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase();
         const params = new URLSearchParams(location.search);
