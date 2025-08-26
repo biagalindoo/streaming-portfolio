@@ -57,7 +57,8 @@ const Catalog = () => {
         const type = params.get('type');
         const genre = params.get('genre');
         
-        let base = series;
+        // Filtrar apenas shows e movies (não episódios)
+        let base = series.filter(s => s.type === 'show' || s.type === 'movie');
         
         // Filtrar por tipo
         if (type === 'show' || type === 'movie') {
