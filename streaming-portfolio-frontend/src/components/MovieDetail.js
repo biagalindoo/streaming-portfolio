@@ -9,6 +9,7 @@ const MovieDetail = () => {
     const [movie, setMovie] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isFavorited, setIsFavorited] = useState(false);
     const { user, authHeaders } = useContext(AuthContext);
     const toast = useToast();
 
@@ -24,6 +25,24 @@ const MovieDetail = () => {
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false));
     }, [id]);
+
+    // Verificar se o item está nos favoritos
+    useEffect(() => {
+        if (!user || !movie) return;
+
+        fetch('/api/favorites', {
+            headers: { ...authHeaders() }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                const favorited = data.some(fav => fav.itemId === movie.id);
+                setIsFavorited(favorited);
+            })
+            .catch(err => console.error('Erro ao verificar favoritos:', err));
+    }, [user, movie, authHeaders]);
 
     if (loading) return <p>Carregando...</p>;
     if (error) return <p>Erro: {error}</p>;
