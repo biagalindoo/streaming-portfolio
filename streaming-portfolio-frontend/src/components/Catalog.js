@@ -2,6 +2,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import MovieCard from './MovieCard';
 
+const FAV_KEY = 'favorites';
+
 const Catalog = () => {
     const [series, setSeries] = useState([]);
     const [error, setError] = useState(null);
@@ -19,14 +21,24 @@ const Catalog = () => {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <p>Carregando...</p>;
-    if (error) return <p>Erro: {error}</p>;
-
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase();
         if (!q) return series;
         return series.filter(s => `${s.title} ${s.year || ''}`.toLowerCase().includes(q));
     }, [series, query]);
+
+    if (loading) return <p>Carregando...</p>;
+    if (error) return <p>Erro: {error}</p>;
+
+    const toggleFav = (item) => {
+        try {
+            const raw = localStorage.getItem(FAV_KEY);
+            const list = raw ? JSON.parse(raw) : [];
+            const exists = list.find((f) => f.id === item.id);
+            const next = exists ? list.filter((f) => f.id !== item.id) : [...list, item];
+            localStorage.setItem(FAV_KEY, JSON.stringify(next));
+        } catch {}
+    };
 
     return (
         <div>
@@ -42,7 +54,10 @@ const Catalog = () => {
             </div>
             <div className="grid">
                 {filtered.map((item) => (
-                    <MovieCard key={item.id} id={item.id} title={item.title} posterUrl={item.posterUrl} year={item.year} />
+                    <div key={item.id}>
+                        <MovieCard id={item.id} title={item.title} posterUrl={item.posterUrl} year={item.year} />
+                        <button className="button" style={{ width: '100%', marginTop: 8 }} onClick={() => toggleFav(item)}>Favoritar</button>
+                    </div>
                 ))}
             </div>
         </div>

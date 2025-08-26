@@ -1,8 +1,10 @@
 // src/components/Layout.js
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Layout = () => {
+    const { user, logout } = useContext(AuthContext);
     return (
         <div>
             <header className="header">
@@ -13,8 +15,17 @@ const Layout = () => {
                     </Link>
                     <nav className="nav">
                         <NavLink to="/" end>Início</NavLink>
-                        <NavLink to="/login">Login</NavLink>
-                        <NavLink to="/signup">Cadastro</NavLink>
+                        {user ? (
+                            <>
+                                <NavLink to="/user">Minha conta</NavLink>
+                                <a href="#" onClick={(e) => { e.preventDefault(); logout(); }}>Sair</a>
+                            </>
+                        ) : (
+                            <>
+                                <NavLink to="/login">Login</NavLink>
+                                <NavLink to="/signup">Cadastro</NavLink>
+                            </>
+                        )}
                     </nav>
                 </div>
             </header>
