@@ -17,6 +17,7 @@ const Catalog = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
+    const { user, authHeaders } = useContext(AuthContext);
 
     useEffect(() => {
         fetch('/api/catalog')
@@ -80,7 +81,6 @@ const Catalog = () => {
     if (error) return <p>Erro: {error}</p>;
 
     const toast = useToast();
-    const { user, authHeaders } = useContext(AuthContext);
     const toggleFav = async (item) => {
         try {
             const isFavorited = favorites.includes(item.id);
