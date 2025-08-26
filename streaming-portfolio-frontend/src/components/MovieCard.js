@@ -87,26 +87,32 @@ const MovieCard = ({ id, title, posterUrl, year }) => {
                 </div>
 
                 {/* Play Button on Hover */}
-                <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    background: 'rgba(0,212,255,0.9)',
-                    color: '#000',
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.5rem',
-                    opacity: 0,
-                    transition: 'opacity 0.3s ease',
-                    backdropFilter: 'blur(10px)'
-                }}>
+                <button
+                    onClick={handleWatch}
+                    style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        background: 'rgba(0,212,255,0.9)',
+                        color: '#000',
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.5rem',
+                        opacity: 0,
+                        transition: 'opacity 0.3s ease',
+                        backdropFilter: 'blur(10px)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        zIndex: 10
+                    }}
+                >
                     ▶
-                </div>
+                </button>
 
                 {/* Info at Bottom */}
                 <div style={{ 
