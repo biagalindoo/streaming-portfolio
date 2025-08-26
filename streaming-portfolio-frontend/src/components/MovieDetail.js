@@ -105,18 +105,57 @@ const ShowEpisodes = ({ parentId }) => {
     }, {});
 
     return (
-        <div style={{ marginTop: 24 }}>
-            <h2>Temporadas e episódios</h2>
+        <div style={{ marginTop: 32 }}>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem' }}>Temporadas e episódios</h2>
             {Object.keys(bySeason).sort((a,b)=>Number(a)-Number(b)).map(season => (
-                <div key={season} style={{ marginBottom: 16 }}>
-                    <h3 style={{ marginBottom: 8 }}>Temporada {season}</h3>
-                    <div className="grid">
+                <div key={season} style={{ marginBottom: 32 }}>
+                    <h3 style={{ 
+                        marginBottom: 16, 
+                        fontSize: '1.5rem', 
+                        color: 'var(--accent)',
+                        borderBottom: '2px solid var(--accent)',
+                        paddingBottom: '8px',
+                        display: 'inline-block'
+                    }}>
+                        Temporada {season}
+                    </h3>
+                    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
                         {bySeason[season].sort((a,b)=>a.episodeNumber-b.episodeNumber).map(ep => (
-                            <div key={ep.id} className="card">
-                                {ep.coverUrl ? <img src={ep.coverUrl} alt={ep.title} /> : <div style={{ height: 160 }} />}
-                                <div className="card-body">
-                                    <div className="card-title">Ep {ep.episodeNumber}: {ep.title}</div>
-                                    <div className="card-meta">{ep.description}</div>
+                            <div key={ep.id} className="card" style={{ 
+                                background: 'rgba(255,255,255,0.02)', 
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                transition: 'all 0.3s ease'
+                            }}>
+                                {ep.coverUrl ? (
+                                    <img src={ep.coverUrl} alt={ep.title} style={{ height: 200, objectFit: 'cover' }} />
+                                ) : (
+                                    <div style={{ 
+                                        height: 200, 
+                                        background: 'linear-gradient(45deg, var(--primary), var(--accent))',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: 'white',
+                                        fontSize: '1.2rem'
+                                    }}>
+                                        Ep {ep.episodeNumber}
+                                    </div>
+                                )}
+                                <div className="card-body" style={{ padding: '16px' }}>
+                                    <div className="card-title" style={{ 
+                                        fontSize: '1.1rem', 
+                                        marginBottom: '8px',
+                                        fontWeight: 600
+                                    }}>
+                                        Ep {ep.episodeNumber}: {ep.title}
+                                    </div>
+                                    <div className="card-meta" style={{ 
+                                        fontSize: '0.9rem', 
+                                        lineHeight: 1.5,
+                                        color: 'var(--muted)'
+                                    }}>
+                                        {ep.description}
+                                    </div>
                                 </div>
                             </div>
                         ))}

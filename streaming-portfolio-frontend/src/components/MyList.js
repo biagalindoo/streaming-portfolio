@@ -52,9 +52,9 @@ const MyList = () => {
         <p>Você ainda não adicionou favoritos.</p>
       ) : (
         <div className="grid">
-          {items.map((item) => (
-            <MovieCard key={item.id} id={item.id} title={item.title} posterUrl={item.posterUrl} year={item.year} />
-          ))}
+                     {items.map((item) => (
+             <MovieCard key={item.id} id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} />
+           ))}
         </div>
       )}
     </div>
