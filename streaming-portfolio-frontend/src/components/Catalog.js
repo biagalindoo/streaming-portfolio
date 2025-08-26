@@ -18,6 +18,7 @@ const Catalog = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, authHeaders } = useContext(AuthContext);
+    const toast = useToast();
 
     useEffect(() => {
         fetch('/api/catalog')
@@ -77,10 +78,8 @@ const Catalog = () => {
         return base.filter(s => `${s.title} ${s.year || ''}`.toLowerCase().includes(q));
     }, [series, query, location.search]);
 
-    if (loading) return <p>Carregando...</p>;
-    if (error) return <p>Erro: {error}</p>;
-
-    const toast = useToast();
+    if (loading) return <div style={{ color: 'white', padding: '20px' }}>Carregando...</div>;
+    if (error) return <div style={{ color: 'red', padding: '20px' }}>Erro: {error}</div>;
     const toggleFav = async (item) => {
         try {
             const isFavorited = favorites.includes(item.id);
