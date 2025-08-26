@@ -185,12 +185,43 @@ const Catalog = () => {
                             color: 'white', 
                             padding: '0 20px',
                             fontSize: 16,
-                            backdropFilter: 'blur(10px)'
+                            backdropFilter: 'blur(10px)',
+                            cursor: 'pointer'
                         }}
                     >
-                        <option value="">Todos os tipos</option>
-                        <option value="show">Séries</option>
-                        <option value="movie">Filmes</option>
+                        <option value="" style={{ background: '#1a1a2e', color: 'white' }}>Todos os tipos</option>
+                        <option value="show" style={{ background: '#1a1a2e', color: 'white' }}>Séries</option>
+                        <option value="movie" style={{ background: '#1a1a2e', color: 'white' }}>Filmes</option>
+                    </select>
+                    <select 
+                        value={new URLSearchParams(location.search).get('genre') || ''} 
+                        onChange={(e) => {
+                            const v = e.target.value;
+                            const params = new URLSearchParams(location.search);
+                            if (v) params.set('genre', v); else params.delete('genre');
+                            navigate({ search: params.toString() });
+                        }}
+                        style={{ 
+                            height: 48, 
+                            borderRadius: 12, 
+                            border: '1px solid rgba(255,255,255,0.2)', 
+                            background: 'rgba(255,255,255,0.1)', 
+                            color: 'white', 
+                            padding: '0 20px',
+                            fontSize: 16,
+                            backdropFilter: 'blur(10px)',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <option value="" style={{ background: '#1a1a2e', color: 'white' }}>Todos os gêneros</option>
+                        <option value="Ação" style={{ background: '#1a1a2e', color: 'white' }}>Ação</option>
+                        <option value="Drama" style={{ background: '#1a1a2e', color: 'white' }}>Drama</option>
+                        <option value="Comédia" style={{ background: '#1a1a2e', color: 'white' }}>Comédia</option>
+                        <option value="Ficção Científica" style={{ background: '#1a1a2e', color: 'white' }}>Ficção Científica</option>
+                        <option value="Terror" style={{ background: '#1a1a2e', color: 'white' }}>Terror</option>
+                        <option value="Romance" style={{ background: '#1a1a2e', color: 'white' }}>Romance</option>
+                        <option value="Aventura" style={{ background: '#1a1a2e', color: 'white' }}>Aventura</option>
+                        <option value="Suspense" style={{ background: '#1a1a2e', color: 'white' }}>Suspense</option>
                     </select>
                 </div>
             </div>
