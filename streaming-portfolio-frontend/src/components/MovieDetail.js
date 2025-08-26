@@ -50,20 +50,75 @@ const MovieDetail = () => {
     return (
         <div>
             <div className="detail">
-                {movie.posterUrl && (
-                    <img className="poster" src={movie.posterUrl} alt={movie.title} />
+                {movie.coverUrl && (
+                    <img className="poster" src={movie.coverUrl} alt={movie.title} />
                 )}
                 <div>
                     <h1 style={{ marginTop: 0 }}>{movie.title}</h1>
-                    <div className="meta">{movie.year} • {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}</div>
+                    <div className="meta">{movie.year || ''} {movie.genres ? `• ${Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}` : ''}</div>
                     <p style={{ lineHeight: 1.7 }}>{movie.description}</p>
                     <button className="button" onClick={addFav}>Adicionar aos favoritos</button>
                 </div>
             </div>
+            {movie.type === 'show' && (
+                <ShowEpisodes parentId={movie.id} />
+            )}
         </div>
     );
 };
 
 export default MovieDetail;
+
+const ShowEpisodes = ({ parentId }) => {
+    const [episodes, setEpisodes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setLoading(true);
+        setError(null);
+        fetch('/api/catalog')
+            .then(r => { if (!r.ok) throw new Error('Falha ao carregar episódios'); return r.json(); })
+            .then(data => {
+                const eps = data.filter(i => i.type === 'episode' && i.showId === parentId);
+                setEpisodes(eps);
+            })
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, [parentId]);
+
+    if (loading) return <p>Carregando episódios...</p>;
+    if (error) return <p>Erro: {error}</p>;
+    if (!episodes.length) return null;
+
+    const bySeason = episodes.reduce((acc, ep) => {
+        const s = ep.season || 0;
+        if (!acc[s]) acc[s] = [];
+        acc[s].push(ep);
+        return acc;
+    }, {});
+
+    return (
+        <div style={{ marginTop: 24 }}>
+            <h2>Temporadas e episódios</h2>
+            {Object.keys(bySeason).sort((a,b)=>Number(a)-Number(b)).map(season => (
+                <div key={season} style={{ marginBottom: 16 }}>
+                    <h3 style={{ marginBottom: 8 }}>Temporada {season}</h3>
+                    <div className="grid">
+                        {bySeason[season].sort((a,b)=>a.episodeNumber-b.episodeNumber).map(ep => (
+                            <div key={ep.id} className="card">
+                                {ep.coverUrl ? <img src={ep.coverUrl} alt={ep.title} /> : <div style={{ height: 160 }} />}
+                                <div className="card-body">
+                                    <div className="card-title">Ep {ep.episodeNumber}: {ep.title}</div>
+                                    <div className="card-meta">{ep.description}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 
