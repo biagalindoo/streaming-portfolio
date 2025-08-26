@@ -12,6 +12,8 @@ const Catalog = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [query, setQuery] = useState('');
+    const [favorites, setFavorites] = useState([]);
+    const [favoritesLoading, setFavoritesLoading] = useState(true);
 
     const location = useLocation();
     const navigate = useNavigate();
