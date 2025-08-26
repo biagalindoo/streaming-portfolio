@@ -1,20 +1,29 @@
 // src/components/Layout.js
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 
 const Layout = () => {
     return (
         <div>
-            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid #eee' }}>
-                <nav style={{ display: 'flex', gap: 12 }}>
-                    <Link to="/">Início</Link>
-                    <Link to="/login">Login</Link>
-                    <Link to="/signup">Cadastro</Link>
-                </nav>
+            <header className="header">
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Link to="/" className="brand">
+                        <span className="brand-dot" />
+                        Streaming<span style={{ color: 'var(--accent)' }}>Portfolio</span>
+                    </Link>
+                    <nav className="nav">
+                        <NavLink to="/" end>Início</NavLink>
+                        <NavLink to="/login">Login</NavLink>
+                        <NavLink to="/signup">Cadastro</NavLink>
+                    </nav>
+                </div>
             </header>
-            <main style={{ padding: 20 }}>
+            <main className="container" style={{ paddingTop: 24 }}>
                 <Outlet />
             </main>
+            <footer className="footer">
+                <div className="container">© {new Date().getFullYear()} Streaming Portfolio</div>
+            </footer>
         </div>
     );
 };
