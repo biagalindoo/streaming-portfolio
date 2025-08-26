@@ -53,10 +53,25 @@ const Catalog = () => {
         const q = query.trim().toLowerCase();
         const params = new URLSearchParams(location.search);
         const type = params.get('type');
+        const genre = params.get('genre');
+        
         let base = series;
+        
+        // Filtrar por tipo
         if (type === 'show' || type === 'movie') {
             base = base.filter(s => s.type === type);
         }
+        
+        // Filtrar por gênero
+        if (genre) {
+            base = base.filter(s => {
+                if (!s.genres) return false;
+                const genres = Array.isArray(s.genres) ? s.genres : [s.genres];
+                return genres.some(g => g.toLowerCase() === genre.toLowerCase());
+            });
+        }
+        
+        // Filtrar por busca
         if (!q) return base;
         return base.filter(s => `${s.title} ${s.year || ''}`.toLowerCase().includes(q));
     }, [series, query, location.search]);
@@ -68,27 +83,34 @@ const Catalog = () => {
     const { user, authHeaders } = useContext(AuthContext);
     const toggleFav = async (item) => {
         try {
-            // Try add; if conflict semantics needed we'd query first, here we toggle by attempting delete on failure
-            const addRes = await fetch('/api/favorites', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', ...authHeaders() },
-                body: JSON.stringify({ itemId: item.id }),
-            });
-            if (addRes.ok) {
-                toast.success('Adicionado aos favoritos!');
-                return;
+            const isFavorited = favorites.includes(item.id);
+            
+            if (isFavorited) {
+                // Remover dos favoritos
+                const delRes = await fetch(`/api/favorites/${item.id}`, {
+                    method: 'DELETE',
+                    headers: { ...authHeaders() },
+                });
+                if (delRes.ok || delRes.status === 204) {
+                    setFavorites(prev => prev.filter(id => id !== item.id));
+                    toast.success('Removido dos favoritos');
+                } else {
+                    throw new Error('Falha ao remover dos favoritos');
+                }
+            } else {
+                // Adicionar aos favoritos
+                const addRes = await fetch('/api/favorites', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                    body: JSON.stringify({ itemId: item.id }),
+                });
+                if (addRes.ok) {
+                    setFavorites(prev => [...prev, item.id]);
+                    toast.success('Adicionado aos favoritos!');
+                } else {
+                    throw new Error('Falha ao adicionar aos favoritos');
+                }
             }
-            // if already exists or other, try delete
-            const delRes = await fetch(`/api/favorites/${item.id}`, {
-                method: 'DELETE',
-                headers: { ...authHeaders() },
-            });
-            if (delRes.ok || delRes.status === 204) {
-                toast.success('Removido dos favoritos');
-                return;
-            }
-            const err = await addRes.json().catch(() => ({}));
-            throw new Error(err.error || 'Não foi possível atualizar favoritos');
         } catch (e) {
             toast.error(e.message || 'Erro ao atualizar favoritos');
         }
