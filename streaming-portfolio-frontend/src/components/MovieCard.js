@@ -22,17 +22,14 @@ const MovieCard = ({ id, title, posterUrl, year }) => {
                 boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
             }
         }}>
-            <div style={{ 
-                position: 'relative',
-                height: '100%',
-                overflow: 'hidden',
-                ':hover .play-button': {
-                    opacity: 1
-                },
-                ':hover .overlay': {
-                    opacity: 1
-                }
-            }}>
+            <div 
+                className="movie-card"
+                style={{ 
+                    position: 'relative',
+                    height: '100%',
+                    overflow: 'hidden'
+                }}
+            >
                 {/* Poster */}
                 {posterUrl ? (
                     <img 
