@@ -25,7 +25,13 @@ const MovieCard = ({ id, title, posterUrl, year }) => {
             <div style={{ 
                 position: 'relative',
                 height: '100%',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                ':hover .play-button': {
+                    opacity: 1
+                },
+                ':hover .overlay': {
+                    opacity: 1
+                }
             }}>
                 {/* Poster */}
                 {posterUrl ? (
@@ -54,19 +60,22 @@ const MovieCard = ({ id, title, posterUrl, year }) => {
                 )}
 
                 {/* Overlay on Hover */}
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%)',
-                    opacity: 0,
-                    transition: 'opacity 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    padding: '20px'
-                }}>
+                <div 
+                    className="overlay"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%)',
+                        opacity: 0,
+                        transition: 'opacity 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        padding: '20px'
+                    }}
+                >
                     <div>
                         <div style={{ 
                             fontSize: '1.1rem', 
