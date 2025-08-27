@@ -24,6 +24,16 @@ const Layout = () => {
                         <NavLink to="/?type=movie" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>Filmes</NavLink>
                         <NavLink to="/my-list" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>Minha lista</NavLink>
                         <NavLink to="/recommendations" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>Recomendações</NavLink>
+                        
+                                                  {/* Social Features */}
+                          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${colors.border}` }}>
+                              <div style={{ color: colors.textSecondary, fontSize: '0.8rem', fontWeight: '600', marginBottom: '10px', textTransform: 'uppercase' }}>
+                                  Social
+                              </div>
+                              <NavLink to="/rankings" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>🏆 Rankings</NavLink>
+                              <br />
+                              <NavLink to="/lists" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>📋 Listas Públicas</NavLink>
+                          </div>
                     </nav>
                 </div>
             </aside>

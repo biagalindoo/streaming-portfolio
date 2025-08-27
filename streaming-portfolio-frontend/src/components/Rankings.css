@@ -1,0 +1,34 @@
+.rankings {
+    transition: all 0.3s ease;
+}
+
+.rankings .rank-badge {
+    transition: all 0.3s ease;
+}
+
+.rankings .user-card {
+    transition: all 0.3s ease;
+}
+
+.rankings .user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.rankings .stats-card {
+    transition: all 0.3s ease;
+}
+
+.rankings .stats-card:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .rankings .grid-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .rankings .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}

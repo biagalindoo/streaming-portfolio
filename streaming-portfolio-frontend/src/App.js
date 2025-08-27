@@ -13,6 +13,9 @@ import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/Toast';
 import MyList from './components/MyList';
 import Recommendations from './components/Recommendations';
+import UserProfile from './components/UserProfile';
+import Rankings from './components/Rankings';
+import PublicLists from './components/PublicLists';
 
 const App = () => {
     return (
@@ -29,6 +32,9 @@ const App = () => {
                             <Route path="user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
                             <Route path="my-list" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
                             <Route path="recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
+                            <Route path="profile/:id" element={<UserProfile />} />
+                            <Route path="rankings" element={<Rankings />} />
+                            <Route path="lists" element={<PublicLists />} />
                         </Route>
                     </Routes>
                 </BrowserRouter>

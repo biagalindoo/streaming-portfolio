@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import AddToListButton from './AddToListButton';
 
 const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) => {
     const { colors } = useTheme();
@@ -125,6 +126,9 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                 >
                     ▶
                 </button>
+
+                {/* Add to List Button */}
+                <AddToListButton itemId={id} itemTitle={title} />
 
                 {/* Info at Bottom */}
                 <div style={{ 
