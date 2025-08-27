@@ -64,33 +64,54 @@ const Catalog = () => {
         
         // Filtrar por perfil ativo (controle parental)
         if (currentProfile) {
+            console.log('=== FILTRO DE PERFIL ATIVO ===');
+            console.log('Perfil atual:', currentProfile);
+            console.log('Restrições:', currentProfile.restrictions);
+            
             const ageRatingOrder = ['L', '10', '12', '14', '16', '18'];
             const profileRatingIndex = ageRatingOrder.indexOf(currentProfile.restrictions.maxAgeRating);
+            console.log('Índice da classificação do perfil:', profileRatingIndex, '(', currentProfile.restrictions.maxAgeRating, ')');
             
             base = base.filter(s => {
                 const contentRating = s.ageRating || 'L';
                 const contentRatingIndex = ageRatingOrder.indexOf(contentRating);
                 
-                // Verificar classificação etária
+                console.log(`\nVerificando: ${s.title}`);
+                console.log(`Classificação do conteúdo: ${contentRating} (índice: ${contentRatingIndex})`);
+                console.log(`Classificação do perfil: ${currentProfile.restrictions.maxAgeRating} (índice: ${profileRatingIndex})`);
+                
+                // Verificar classificação etária - conteúdo deve ser igual ou menor que o perfil
                 if (contentRatingIndex > profileRatingIndex) {
+                    console.log(`❌ BLOQUEANDO ${s.title}: ${contentRating} > ${currentProfile.restrictions.maxAgeRating}`);
                     return false;
                 }
                 
-                // Verificar restrições específicas
-                if (s.hasViolence && !currentProfile.restrictions.allowViolence) {
-                    return false;
+                // Para perfis infantis, aplicar restrições mais rigorosas
+                if (currentProfile.isChild) {
+                    console.log('Perfil infantil detectado - aplicando restrições rigorosas');
+                    
+                    // Verificar restrições específicas
+                    if (s.hasViolence && !currentProfile.restrictions.allowViolence) {
+                        console.log(`❌ BLOQUEANDO ${s.title}: violência não permitida`);
+                        return false;
+                    }
+                    
+                    if (s.hasLanguage && !currentProfile.restrictions.allowLanguage) {
+                        console.log(`❌ BLOQUEANDO ${s.title}: linguagem inadequada`);
+                        return false;
+                    }
+                    
+                    if (s.hasAdultContent && !currentProfile.restrictions.allowAdultContent) {
+                        console.log(`❌ BLOQUEANDO ${s.title}: conteúdo adulto`);
+                        return false;
+                    }
                 }
                 
-                if (s.hasLanguage && !currentProfile.restrictions.allowLanguage) {
-                    return false;
-                }
-                
-                if (s.hasAdultContent && !currentProfile.restrictions.allowAdultContent) {
-                    return false;
-                }
-                
+                console.log(`✅ PERMITINDO ${s.title}: ${contentRating} <= ${currentProfile.restrictions.maxAgeRating}`);
                 return true;
             });
+            
+            console.log('=== FIM DO FILTRO ===\n');
         }
         
         // Filtrar por tipo
@@ -190,6 +211,40 @@ const Catalog = () => {
                 }}>
                     Explorar
                 </h1>
+                {currentProfile && (
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        marginBottom: '20px',
+                        padding: '10px 20px',
+                        background: currentProfile.isChild ? 'rgba(255, 107, 107, 0.2)' : 'rgba(0, 255, 0, 0.2)',
+                        borderRadius: '20px',
+                        border: `1px solid ${currentProfile.isChild ? '#ff6b6b' : '#00ff00'}`
+                    }}>
+                        <span style={{ fontSize: '1.5rem' }}>{currentProfile.avatar}</span>
+                        <span style={{ 
+                            color: colors.text, 
+                            fontSize: '1.1rem',
+                            fontWeight: '600'
+                        }}>
+                            Perfil: {currentProfile.name} ({currentProfile.age} anos)
+                        </span>
+                        {currentProfile.isChild && (
+                            <span style={{
+                                background: '#ff6b6b',
+                                color: 'white',
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                                fontSize: '0.8rem',
+                                fontWeight: '600'
+                            }}>
+                                👶 Infantil
+                            </span>
+                        )}
+                    </div>
+                )}
                 <p style={{ 
                     color: colors.textSecondary, 
                     fontSize: '1.1rem', 

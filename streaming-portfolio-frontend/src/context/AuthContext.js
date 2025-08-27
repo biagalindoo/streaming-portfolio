@@ -56,8 +56,10 @@ export const AuthProvider = ({ children }) => {
         if (!res.ok) throw new Error(data.error || 'Falha no login');
         setToken(data.token);
         setUser(data.user || { email });
+        // Reset current profile to show profile selector
+        setCurrentProfile(null);
         return data;
-    }, []);
+    }, [setCurrentProfile]);
 
     const signup = useCallback(async ({ name, email, password }) => {
         const res = await fetch('/api/auth/signup', {

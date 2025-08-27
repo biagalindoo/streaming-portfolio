@@ -19,17 +19,23 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
     };
 
     return (
-        <Link to={`/movies/${id}`} style={{ 
-            textDecoration: 'none',
-            color: colors.text,
-            transition: 'all 0.3s ease',
-            display: 'block',
-            height: '100%',
-            ':hover': {
-                transform: 'scale(1.02)',
-                boxShadow: `0 20px 40px ${colors.overlay}`
-            }
-        }}>
+        <Link 
+            to={user ? `/movies/${id}` : '#'} 
+            onClick={!user ? (e) => e.preventDefault() : undefined}
+            style={{ 
+                textDecoration: 'none',
+                color: colors.text,
+                transition: 'all 0.3s ease',
+                display: 'block',
+                height: '100%',
+                cursor: user ? 'pointer' : 'default',
+                opacity: user ? 1 : 0.7,
+                ':hover': {
+                    transform: user ? 'scale(1.02)' : 'none',
+                    boxShadow: user ? `0 20px 40px ${colors.overlay}` : 'none'
+                }
+            }}
+        >
             <div 
                 className="movie-card"
                 style={{ 
@@ -81,6 +87,21 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                         padding: '20px'
                     }}
                 >
+                    {!user && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            background: 'rgba(255, 0, 0, 0.8)',
+                            color: 'white',
+                            padding: '5px 10px',
+                            borderRadius: '15px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600'
+                        }}>
+                            🔒 Faça login
+                        </div>
+                    )}
                     <div>
                         <div style={{ 
                             fontSize: '1.1rem', 

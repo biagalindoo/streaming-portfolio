@@ -64,13 +64,26 @@ const ProfileSelector = () => {
         }
 
         try {
+            // Garantir que as restrições estejam corretas para perfis infantis
+            const profileData = {
+                ...newProfile,
+                restrictions: {
+                    maxAgeRating: newProfile.restrictions.maxAgeRating,
+                    allowViolence: newProfile.isChild ? false : newProfile.restrictions.allowViolence,
+                    allowLanguage: newProfile.isChild ? false : newProfile.restrictions.allowLanguage,
+                    allowAdultContent: newProfile.isChild ? false : newProfile.restrictions.allowAdultContent
+                }
+            };
+            
+            console.log('Criando perfil com dados:', profileData);
+            
             const response = await fetch('/api/parental/profiles', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(newProfile)
+                body: JSON.stringify(profileData)
             });
 
             if (response.ok) {
