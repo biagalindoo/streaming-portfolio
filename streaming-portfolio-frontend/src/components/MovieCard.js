@@ -2,10 +2,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import AddToListButton from './AddToListButton';
 
 const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) => {
     const { colors } = useTheme();
+    const { user } = useAuth();
     const handleWatch = (e) => {
         e.preventDefault();
         e.stopPropagation();

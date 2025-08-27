@@ -18,7 +18,7 @@ const Catalog = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const { user, authHeaders } = useContext(AuthContext);
+    const { user, authHeaders, currentProfile } = useContext(AuthContext);
     const { colors } = useTheme();
     const toast = useToast();
 
@@ -62,6 +62,37 @@ const Catalog = () => {
         // Filtrar apenas shows e movies (não episódios)
         let base = series.filter(s => s.type === 'show' || s.type === 'movie');
         
+        // Filtrar por perfil ativo (controle parental)
+        if (currentProfile) {
+            const ageRatingOrder = ['L', '10', '12', '14', '16', '18'];
+            const profileRatingIndex = ageRatingOrder.indexOf(currentProfile.restrictions.maxAgeRating);
+            
+            base = base.filter(s => {
+                const contentRating = s.ageRating || 'L';
+                const contentRatingIndex = ageRatingOrder.indexOf(contentRating);
+                
+                // Verificar classificação etária
+                if (contentRatingIndex > profileRatingIndex) {
+                    return false;
+                }
+                
+                // Verificar restrições específicas
+                if (s.hasViolence && !currentProfile.restrictions.allowViolence) {
+                    return false;
+                }
+                
+                if (s.hasLanguage && !currentProfile.restrictions.allowLanguage) {
+                    return false;
+                }
+                
+                if (s.hasAdultContent && !currentProfile.restrictions.allowAdultContent) {
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+        
         // Filtrar por tipo
         if (type === 'show' || type === 'movie') {
             base = base.filter(s => s.type === type);
@@ -79,7 +110,7 @@ const Catalog = () => {
         // Filtrar por busca
         if (!q) return base;
         return base.filter(s => `${s.title} ${s.year || ''}`.toLowerCase().includes(q));
-    }, [series, query, location.search]);
+    }, [series, query, location.search, currentProfile]);
 
     if (loading) return (
         <div style={{ 

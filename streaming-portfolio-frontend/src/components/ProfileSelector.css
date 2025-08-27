@@ -1,0 +1,99 @@
+.profile-selector {
+    transition: all 0.3s ease;
+}
+
+.profile-selector .profile-card {
+    transition: all 0.3s ease;
+}
+
+.profile-selector .profile-card:hover {
+    transform: scale(1.05);
+}
+
+.profile-selector .avatar-circle {
+    transition: all 0.3s ease;
+}
+
+.profile-selector .avatar-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.profile-selector .add-profile {
+    transition: all 0.3s ease;
+}
+
+.profile-selector .add-profile:hover {
+    transform: scale(1.05);
+    border-color: var(--primary);
+}
+
+.profile-selector .modal-overlay {
+    animation: fadeIn 0.3s ease;
+}
+
+.profile-selector .modal-content {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-selector .avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.profile-selector .avatar-option {
+    transition: all 0.2s ease;
+}
+
+.profile-selector .avatar-option:hover {
+    transform: scale(1.1);
+}
+
+.profile-selector .avatar-option.selected {
+    border-color: var(--primary);
+    background: var(--primary);
+}
+
+@media (max-width: 768px) {
+    .profile-selector .profiles-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .profile-selector .header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .profile-selector .avatar-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-selector .profiles-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-selector .header h1 {
+        font-size: 2rem;
+    }
+}

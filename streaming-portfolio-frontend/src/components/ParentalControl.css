@@ -1,0 +1,80 @@
+.parental-control {
+    transition: all 0.3s ease;
+}
+
+.parental-control .profile-card {
+    transition: all 0.3s ease;
+}
+
+.parental-control .profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.parental-control .age-rating {
+    transition: all 0.3s ease;
+}
+
+.parental-control .restriction-item {
+    transition: all 0.2s ease;
+}
+
+.parental-control .modal-overlay {
+    animation: fadeIn 0.3s ease;
+}
+
+.parental-control .modal-content {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.parental-control .profile-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.parental-control .current-profile {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-hover) 100%);
+    border: 2px solid var(--primary);
+}
+
+.parental-control .child-profile {
+    border-left: 4px solid #ff6b6b;
+}
+
+.parental-control .adult-profile {
+    border-left: 4px solid #4ecdc4;
+}
+
+@media (max-width: 768px) {
+    .parental-control .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .parental-control .header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .parental-control .modal-content {
+        width: 95%;
+        max-width: none;
+    }
+}

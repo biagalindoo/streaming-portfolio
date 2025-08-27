@@ -16,6 +16,8 @@ import Recommendations from './components/Recommendations';
 import UserProfile from './components/UserProfile';
 import Rankings from './components/Rankings';
 import PublicLists from './components/PublicLists';
+import ParentalControl from './components/ParentalControl';
+import ProfileGuard from './components/ProfileGuard';
 
 const App = () => {
     return (
@@ -28,13 +30,14 @@ const App = () => {
                             <Route index element={<Catalog />} />
                             <Route path="login" element={<Login />} />
                             <Route path="signup" element={<Signup />} />
-                            <Route path="movies/:id" element={<MovieDetail />} />
+                            <Route path="movies/:id" element={<ProtectedRoute><MovieDetail /></ProtectedRoute>} />
                             <Route path="user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
                             <Route path="my-list" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
                             <Route path="recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
                             <Route path="profile/:id" element={<UserProfile />} />
                             <Route path="rankings" element={<Rankings />} />
                             <Route path="lists" element={<PublicLists />} />
+                            <Route path="parental" element={<ParentalControl />} />
                         </Route>
                     </Routes>
                 </BrowserRouter>

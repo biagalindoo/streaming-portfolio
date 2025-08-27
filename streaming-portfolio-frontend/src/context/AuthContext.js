@@ -4,10 +4,12 @@ import React, { createContext, useContext, useCallback, useEffect, useMemo, useS
 export const AuthContext = createContext({
     user: null,
     token: null,
+    currentProfile: null,
     authHeaders: () => ({}),
     login: async () => {},
     signup: async () => {},
     logout: () => {},
+    setCurrentProfile: () => {},
 });
 
 export const useAuth = () => {
@@ -23,6 +25,7 @@ const STORAGE_KEY = 'auth';
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
+    const [currentProfile, setCurrentProfile] = useState(null);
 
     useEffect(() => {
         try {
@@ -70,10 +73,20 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         setUser(null);
         setToken(null);
+        setCurrentProfile(null);
         localStorage.removeItem(STORAGE_KEY);
     }, []);
 
-    const value = useMemo(() => ({ user, token, authHeaders, login, signup, logout }), [user, token, authHeaders, login, signup, logout]);
+    const value = useMemo(() => ({ 
+        user, 
+        token, 
+        currentProfile, 
+        authHeaders, 
+        login, 
+        signup, 
+        logout, 
+        setCurrentProfile 
+    }), [user, token, currentProfile, authHeaders, login, signup, logout, setCurrentProfile]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

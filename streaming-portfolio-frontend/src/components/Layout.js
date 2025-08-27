@@ -5,7 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 const Layout = () => {
-    const { user, logout } = useContext(AuthContext);
+    const { user, logout, currentProfile } = useContext(AuthContext);
     const { isDark, toggleTheme, colors } = useTheme();
     
     return (
@@ -33,6 +33,8 @@ const Layout = () => {
                               <NavLink to="/rankings" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>🏆 Rankings</NavLink>
                               <br />
                               <NavLink to="/lists" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>📋 Listas Públicas</NavLink>
+                              <br />
+                              <NavLink to="/parental" style={{ color: colors.textSecondary, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>🔒 Controle Parental</NavLink>
                           </div>
                     </nav>
                 </div>
@@ -65,23 +67,42 @@ const Layout = () => {
                             
 
                             
-                            {user ? (
-                                <>
-                                    <NavLink to="/user" style={{ 
-                                        width: 40, 
-                                        height: 40, 
-                                        borderRadius: '50%', 
-                                        background: colors.secondary, 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        justifyContent: 'center',
-                                        fontSize: 16,
-                                        fontWeight: 600,
-                                        color: 'white',
-                                        textDecoration: 'none'
-                                    }}>
-                                        {(user.name || user.email || 'U').charAt(0).toUpperCase()}
-                                    </NavLink>
+                                                         {user ? (
+                                 <>
+                                     <NavLink to="/user" style={{ 
+                                         width: 40, 
+                                         height: 40, 
+                                         borderRadius: '50%', 
+                                         background: colors.secondary, 
+                                         display: 'flex', 
+                                         alignItems: 'center', 
+                                         justifyContent: 'center',
+                                         fontSize: 16,
+                                         fontWeight: 600,
+                                         color: 'white',
+                                         textDecoration: 'none',
+                                         position: 'relative'
+                                     }}>
+                                         {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                                         {currentProfile && (
+                                             <div style={{
+                                                 position: 'absolute',
+                                                 bottom: -2,
+                                                 right: -2,
+                                                 width: 16,
+                                                 height: 16,
+                                                 borderRadius: '50%',
+                                                 background: currentProfile.isChild ? '#ff6b6b' : colors.primary,
+                                                 display: 'flex',
+                                                 alignItems: 'center',
+                                                 justifyContent: 'center',
+                                                 fontSize: '10px',
+                                                 border: `2px solid ${colors.background}`
+                                             }}>
+                                                 {currentProfile.avatar}
+                                             </div>
+                                         )}
+                                     </NavLink>
                                     <button 
                                         onClick={logout}
                                         style={{ 
