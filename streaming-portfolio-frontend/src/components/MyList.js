@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import MovieCard from './MovieCard';
 
 const MyList = () => {
   const { authHeaders } = useContext(AuthContext);
+  const { colors } = useTheme();
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [catalog, setCatalog] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,22 +46,43 @@ const MyList = () => {
     return catalog.filter((c) => set.has(String(c.id)));
   }, [favoriteIds, catalog]);
 
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>Erro: {error}</p>;
+  if (loading) return (
+    <div style={{ 
+      textAlign: 'center', 
+      padding: '60px 20px',
+      color: colors.text
+    }}>
+      <div style={{ fontSize: '1.5rem', marginBottom: '16px' }}>
+        Carregando sua lista...
+      </div>
+    </div>
+  );
+  
+  if (error) return (
+    <div style={{ 
+      textAlign: 'center', 
+      padding: '60px 20px',
+      color: colors.error
+    }}>
+      <div style={{ fontSize: '1.5rem', marginBottom: '16px' }}>
+        Erro: {error}
+      </div>
+    </div>
+  );
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
       {/* Header Section */}
       <div style={{ 
-          background: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%)',
+          background: colors.gradient,
           borderRadius: '20px',
           padding: '40px',
           marginBottom: '40px',
-          border: '1px solid rgba(255,255,255,0.1)',
-          backdropFilter: 'blur(10px)'
+          border: `1px solid ${colors.border}`,
+          backdropFilter: colors.backdropBlur
       }}>
           <h1 style={{ 
-              color: 'white', 
+              color: colors.text, 
               fontSize: '3rem', 
               marginBottom: '1rem',
               fontWeight: 700,
@@ -68,7 +91,7 @@ const MyList = () => {
               Minha Lista
           </h1>
           <p style={{ 
-              color: '#8b93a7', 
+              color: colors.textSecondary, 
               fontSize: '1.1rem', 
               textAlign: 'center'
           }}>
@@ -80,7 +103,7 @@ const MyList = () => {
         <div style={{ 
             textAlign: 'center', 
             padding: '60px 20px',
-            color: '#8b93a7'
+            color: colors.textSecondary
         }}>
             <div style={{ fontSize: '1.5rem', marginBottom: '16px' }}>
                 Nenhum favorito ainda

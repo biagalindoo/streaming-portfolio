@@ -9,13 +9,16 @@ import MovieDetail from './components/MovieDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserPage from './components/UserPage';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/Toast';
 import MyList from './components/MyList';
+import Recommendations from './components/Recommendations';
 
 const App = () => {
     return (
-        <AuthProvider>
-            <ToastProvider>
+        <ThemeProvider>
+            <AuthProvider>
+                <ToastProvider>
                 <BrowserRouter>
                     <Routes>
                         <Route element={<Layout />}>
@@ -25,11 +28,13 @@ const App = () => {
                             <Route path="movies/:id" element={<MovieDetail />} />
                             <Route path="user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
                             <Route path="my-list" element={<ProtectedRoute><MyList /></ProtectedRoute>} />
+                            <Route path="recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
                         </Route>
                     </Routes>
                 </BrowserRouter>
-            </ToastProvider>
-        </AuthProvider>
+                </ToastProvider>
+            </AuthProvider>
+        </ThemeProvider>
     );
 };
 

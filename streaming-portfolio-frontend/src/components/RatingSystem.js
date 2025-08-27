@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useEffect } from 'react';
 import { useToast } from './Toast';
 
 const RatingSystem = ({ itemId, onRatingChange }) => {
@@ -12,10 +11,9 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
     const [loading, setLoading] = useState(false);
     const [showCommentForm, setShowCommentForm] = useState(false);
     
-    const { user, authHeaders } = useContext(AuthContext);
     const toast = useToast();
 
-    // Carregar avaliações do item
+    // Carregar avaliações do backend
     useEffect(() => {
         if (!itemId) return;
         
@@ -25,18 +23,39 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
                 setAverageRating(data.averageRating);
                 setTotalRatings(data.totalRatings);
                 
-                // Encontrar avaliação do usuário atual
-                if (user) {
-                    const userRatingData = data.ratings.find(r => r.userId === user.id);
+                // Encontrar avaliação do usuário atual (usando userId fixo = 1)
+                const userRatingData = data.ratings.find(r => r.userId === 1);
+                if (userRatingData) {
+                    setUserRating(userRatingData.rating);
+                    setRating(userRatingData.rating);
+                    setComment(userRatingData.comment || '');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading ratings:', error);
+                // Se der erro, usar localStorage como fallback
+                try {
+                    const ratings = JSON.parse(localStorage.getItem('ratings') || '[]');
+                    const itemRatings = ratings.filter(r => r.itemId === itemId);
+                    
+                    const avg = itemRatings.length > 0 
+                        ? itemRatings.reduce((sum, r) => sum + r.rating, 0) / itemRatings.length 
+                        : 0;
+                    
+                    setAverageRating(Math.round(avg * 10) / 10);
+                    setTotalRatings(itemRatings.length);
+                    
+                    const userRatingData = itemRatings.find(r => r.userId === 1);
                     if (userRatingData) {
                         setUserRating(userRatingData.rating);
                         setRating(userRatingData.rating);
                         setComment(userRatingData.comment || '');
                     }
+                } catch (localError) {
+                    console.error('Error loading from localStorage:', localError);
                 }
-            })
-            .catch(error => console.error('Error loading ratings:', error));
-    }, [itemId, user]);
+            });
+    }, [itemId]);
 
     const handleRatingSubmit = async () => {
         if (rating === 0) {
@@ -46,6 +65,7 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
 
         setLoading(true);
         try {
+            // Tentar enviar para o backend primeiro
             const response = await fetch('/api/ratings', {
                 method: 'POST',
                 headers: {
@@ -63,7 +83,7 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
                 setUserRating(rating);
                 toast.success('Avaliação enviada com sucesso!');
                 
-                // Recarregar avaliações para atualizar média
+                // Recarregar avaliações do backend
                 const ratingsResponse = await fetch(`/api/ratings/${itemId}`);
                 const ratingsData = await ratingsResponse.json();
                 setAverageRating(ratingsData.averageRating);
@@ -73,11 +93,56 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
                     onRatingChange(ratingsData);
                 }
             } else {
-                throw new Error('Falha ao enviar avaliação');
+                throw new Error('Falha no backend, usando localStorage');
             }
         } catch (error) {
-            toast.error('Erro ao enviar avaliação');
-            console.error('Error submitting rating:', error);
+            console.error('Backend error, using localStorage:', error);
+            
+            // Fallback para localStorage
+            try {
+                const newRating = {
+                    id: Date.now().toString(),
+                    itemId,
+                    userId: 1,
+                    rating: parseInt(rating),
+                    comment: showCommentForm ? comment : '',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                const ratings = JSON.parse(localStorage.getItem('ratings') || '[]');
+                const existingIndex = ratings.findIndex(r => r.itemId === itemId && r.userId === 1);
+                
+                if (existingIndex >= 0) {
+                    ratings[existingIndex] = newRating;
+                } else {
+                    ratings.push(newRating);
+                }
+                
+                localStorage.setItem('ratings', JSON.stringify(ratings));
+                
+                setUserRating(rating);
+                toast.success('Avaliação salva localmente!');
+                
+                const itemRatings = ratings.filter(r => r.itemId === itemId);
+                const avg = itemRatings.length > 0 
+                    ? itemRatings.reduce((sum, r) => sum + r.rating, 0) / itemRatings.length 
+                    : 0;
+                
+                setAverageRating(Math.round(avg * 10) / 10);
+                setTotalRatings(itemRatings.length);
+                
+                if (onRatingChange) {
+                    onRatingChange({
+                        ratings: itemRatings,
+                        averageRating: Math.round(avg * 10) / 10,
+                        totalRatings: itemRatings.length
+                    });
+                }
+            } catch (localError) {
+                toast.error('Erro ao salvar avaliação');
+                console.error('Error saving to localStorage:', localError);
+            }
         } finally {
             setLoading(false);
         }
@@ -86,6 +151,7 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
     const handleRatingDelete = async () => {
         setLoading(true);
         try {
+            // Tentar deletar do backend primeiro
             const response = await fetch(`/api/ratings/${itemId}`, {
                 method: 'DELETE'
             });
@@ -96,7 +162,7 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
                 setComment('');
                 toast.success('Avaliação removida');
                 
-                // Recarregar avaliações
+                // Recarregar avaliações do backend
                 const ratingsResponse = await fetch(`/api/ratings/${itemId}`);
                 const ratingsData = await ratingsResponse.json();
                 setAverageRating(ratingsData.averageRating);
@@ -105,10 +171,43 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
                 if (onRatingChange) {
                     onRatingChange(ratingsData);
                 }
+            } else {
+                throw new Error('Falha no backend, usando localStorage');
             }
         } catch (error) {
-            toast.error('Erro ao remover avaliação');
-            console.error('Error deleting rating:', error);
+            console.error('Backend error, using localStorage:', error);
+            
+            // Fallback para localStorage
+            try {
+                const ratings = JSON.parse(localStorage.getItem('ratings') || '[]');
+                const filteredRatings = ratings.filter(r => !(r.itemId === itemId && r.userId === 1));
+                
+                localStorage.setItem('ratings', JSON.stringify(filteredRatings));
+                
+                setUserRating(0);
+                setRating(0);
+                setComment('');
+                toast.success('Avaliação removida localmente');
+                
+                const itemRatings = filteredRatings.filter(r => r.itemId === itemId);
+                const avg = itemRatings.length > 0 
+                    ? itemRatings.reduce((sum, r) => sum + r.rating, 0) / itemRatings.length 
+                    : 0;
+                
+                setAverageRating(Math.round(avg * 10) / 10);
+                setTotalRatings(itemRatings.length);
+                
+                if (onRatingChange) {
+                    onRatingChange({
+                        ratings: itemRatings,
+                        averageRating: Math.round(avg * 10) / 10,
+                        totalRatings: itemRatings.length
+                    });
+                }
+            } catch (localError) {
+                toast.error('Erro ao remover avaliação');
+                console.error('Error deleting from localStorage:', localError);
+            }
         } finally {
             setLoading(false);
         }
@@ -166,103 +265,93 @@ const RatingSystem = ({ itemId, onRatingChange }) => {
             </div>
 
             {/* Avaliação do usuário */}
-            {true ? (
-                <div style={{ marginBottom: '20px' }}>
-                    <div style={{ marginBottom: '12px' }}>
-                        <span style={{ color: 'white', fontSize: '1rem' }}>
-                            {userRating > 0 ? 'Sua avaliação:' : 'Avalie este item:'}
-                        </span>
-                    </div>
-                    
+            <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '12px' }}>
+                    <span style={{ color: 'white', fontSize: '1rem' }}>
+                        {userRating > 0 ? 'Sua avaliação:' : 'Avalie este item:'}
+                    </span>
+                </div>
+                
+                <div style={{ marginBottom: '16px' }}>
+                    {renderStars(hover || rating, true)}
+                </div>
+                
+                {showCommentForm && (
                     <div style={{ marginBottom: '16px' }}>
-                        {renderStars(hover || rating, true)}
-                    </div>
-                    
-                    {showCommentForm && (
-                        <div style={{ marginBottom: '16px' }}>
-                            <textarea
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                placeholder="Deixe um comentário (opcional)..."
-                                style={{
-                                    width: '100%',
-                                    minHeight: '80px',
-                                    padding: '12px',
-                                    borderRadius: '8px',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    background: 'rgba(255,255,255,0.1)',
-                                    color: 'white',
-                                    fontSize: '14px',
-                                    resize: 'vertical'
-                                }}
-                            />
-                        </div>
-                    )}
-                    
-                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                        <button
-                            onClick={handleRatingSubmit}
-                            disabled={loading || rating === 0}
+                        <textarea
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="Deixe um comentário (opcional)..."
                             style={{
-                                background: '#00d4ff',
-                                color: '#000',
+                                width: '100%',
+                                minHeight: '80px',
+                                padding: '12px',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                background: 'rgba(255,255,255,0.1)',
+                                color: 'white',
+                                fontSize: '14px',
+                                resize: 'vertical'
+                            }}
+                        />
+                    </div>
+                )}
+                
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <button
+                        onClick={handleRatingSubmit}
+                        disabled={loading || rating === 0}
+                        style={{
+                            background: '#00d4ff',
+                            color: '#000',
+                            border: 'none',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            cursor: loading || rating === 0 ? 'not-allowed' : 'pointer',
+                            opacity: loading || rating === 0 ? 0.6 : 1
+                        }}
+                    >
+                        {loading ? 'Enviando...' : userRating > 0 ? 'Atualizar' : 'Avaliar'}
+                    </button>
+                    
+                    {userRating > 0 && (
+                        <button
+                            onClick={handleRatingDelete}
+                            disabled={loading}
+                            style={{
+                                background: '#ff6b6b',
+                                color: 'white',
                                 border: 'none',
                                 padding: '10px 20px',
                                 borderRadius: '8px',
                                 fontSize: '14px',
                                 fontWeight: 600,
-                                cursor: loading || rating === 0 ? 'not-allowed' : 'pointer',
-                                opacity: loading || rating === 0 ? 0.6 : 1
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                opacity: loading ? 0.6 : 1
                             }}
                         >
-                            {loading ? 'Enviando...' : userRating > 0 ? 'Atualizar' : 'Avaliar'}
+                            Remover
                         </button>
-                        
-                        {userRating > 0 && (
-                            <button
-                                onClick={handleRatingDelete}
-                                disabled={loading}
-                                style={{
-                                    background: '#ff6b6b',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '10px 20px',
-                                    borderRadius: '8px',
-                                    fontSize: '14px',
-                                    fontWeight: 600,
-                                    cursor: loading ? 'not-allowed' : 'pointer',
-                                    opacity: loading ? 0.6 : 1
-                                }}
-                            >
-                                Remover
-                            </button>
-                        )}
-                        
-                        <button
-                            onClick={() => setShowCommentForm(!showCommentForm)}
-                            style={{
-                                background: 'rgba(255,255,255,0.1)',
-                                color: 'white',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                padding: '10px 20px',
-                                borderRadius: '8px',
-                                fontSize: '14px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            {showCommentForm ? 'Ocultar comentário' : 'Adicionar comentário'}
-                        </button>
-                    </div>
+                    )}
+                    
+                    <button
+                        onClick={() => setShowCommentForm(!showCommentForm)}
+                        style={{
+                            background: 'rgba(255,255,255,0.1)',
+                            color: 'white',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {showCommentForm ? 'Ocultar comentário' : 'Adicionar comentário'}
+                    </button>
                 </div>
-            ) : (
-                <div style={{ 
-                    textAlign: 'center', 
-                    padding: '20px',
-                    color: '#8b93a7'
-                }}>
-                    <p>Faça login para avaliar este item</p>
-                </div>
-            )}
+            </div>
         </div>
     );
 };

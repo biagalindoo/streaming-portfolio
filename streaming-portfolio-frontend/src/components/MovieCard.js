@@ -1,8 +1,10 @@
 // src/components/MovieCard.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) => {
+    const { colors } = useTheme();
     const handleWatch = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -16,13 +18,13 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
     return (
         <Link to={`/movies/${id}`} style={{ 
             textDecoration: 'none',
-            color: 'white',
+            color: colors.text,
             transition: 'all 0.3s ease',
             display: 'block',
             height: '100%',
             ':hover': {
                 transform: 'scale(1.02)',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
+                boxShadow: `0 20px 40px ${colors.overlay}`
             }
         }}>
             <div 
@@ -51,8 +53,8 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-                        color: '#8b93a7',
+                        background: `linear-gradient(135deg, ${colors.surface} 0%, ${colors.surfaceHover} 100%)`,
+                        color: colors.textSecondary,
                         fontSize: '1rem'
                     }}>
                         Sem imagem
@@ -68,7 +70,7 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%)',
+                        background: `linear-gradient(180deg, transparent 0%, ${colors.overlay} 100%)`,
                         opacity: 0,
                         transition: 'opacity 0.3s ease',
                         display: 'flex',
@@ -87,7 +89,7 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                         </div>
                         <div style={{ 
                             fontSize: '0.9rem', 
-                            color: '#8b93a7',
+                            color: colors.textSecondary,
                             textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                         }}>
                             {year || '2024'} • {duration || '2h 15min'}
@@ -104,7 +106,7 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        background: 'rgba(0,212,255,0.9)',
+                        background: `${colors.primary}dd`,
                         color: '#000',
                         width: '60px',
                         height: '60px',
@@ -130,7 +132,7 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%)',
+                                            background: `linear-gradient(180deg, transparent 0%, ${colors.overlay} 100%)`,
                     padding: '20px',
                     color: 'white'
                 }}>
@@ -144,7 +146,7 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                     </div>
                     <div style={{ 
                         fontSize: '0.85rem', 
-                        color: '#8b93a7',
+                        color: '#ffffff',
                         textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
                     }}>
                         {year || '2024'} • {duration || '2h 15min'}

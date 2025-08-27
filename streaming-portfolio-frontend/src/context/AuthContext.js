@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from 'react';
 
 export const AuthContext = createContext({
     user: null,
@@ -9,6 +9,14 @@ export const AuthContext = createContext({
     signup: async () => {},
     logout: () => {},
 });
+
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};
 
 const STORAGE_KEY = 'auth';
 

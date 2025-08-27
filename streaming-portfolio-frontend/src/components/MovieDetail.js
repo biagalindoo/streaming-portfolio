@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useToast } from './Toast';
 import RatingSystem from './RatingSystem';
 
@@ -12,6 +13,7 @@ const MovieDetail = () => {
     const [loading, setLoading] = useState(true);
     const [isFavorited, setIsFavorited] = useState(false);
     const { user, authHeaders } = useContext(AuthContext);
+    const { colors } = useTheme();
     const toast = useToast();
 
     useEffect(() => {
@@ -130,15 +132,15 @@ const MovieDetail = () => {
                         marginBottom: '1.5rem',
                         fontSize: '1.1rem'
                     }}>
-                        <span style={{ color: '#00d4ff', fontWeight: 600 }}>{movie.year || '2024'}</span>
-                        <span style={{ color: '#8b93a7' }}>•</span>
-                        <span style={{ color: '#8b93a7' }}>{movie.type === 'movie' ? 'Filme' : 'Série'}</span>
-                        <span style={{ color: '#8b93a7' }}>•</span>
-                        <span style={{ color: '#8b93a7' }}>{movie.duration || (movie.type === 'movie' ? '2h 15min' : '8 Episódios')}</span>
+                        <span style={{ color: colors.primary, fontWeight: 600 }}>{movie.year || '2024'}</span>
+                        <span style={{ color: colors.textSecondary }}>•</span>
+                        <span style={{ color: colors.textSecondary }}>{movie.type === 'movie' ? 'Filme' : 'Série'}</span>
+                        <span style={{ color: colors.textSecondary }}>•</span>
+                        <span style={{ color: colors.textSecondary }}>{movie.duration || (movie.type === 'movie' ? '2h 15min' : '8 Episódios')}</span>
                         {movie.genres && (
                             <>
-                                <span style={{ color: '#8b93a7' }}>•</span>
-                                <span style={{ color: '#8b93a7' }}>
+                                <span style={{ color: colors.textSecondary }}>•</span>
+                                <span style={{ color: colors.textSecondary }}>
                                     {Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres}
                                 </span>
                             </>
@@ -157,7 +159,7 @@ const MovieDetail = () => {
                         <button 
                             onClick={handleWatch}
                             style={{ 
-                                background: '#00d4ff',
+                                background: colors.primary,
                                 color: '#000',
                                 border: 'none',
                                 padding: '16px 32px',
