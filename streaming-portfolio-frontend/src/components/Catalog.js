@@ -63,14 +63,23 @@ const Catalog = () => {
         let base = series.filter(s => s.type === 'show' || s.type === 'movie');
         
         // Filtrar por perfil ativo (controle parental)
-        if (currentProfile) {
+        if (currentProfile && currentProfile.restrictions && currentProfile.restrictions.maxAgeRating) {
+            console.log('=== VERIFICAÇÃO DO PERFIL ===');
+            console.log('Perfil completo:', JSON.stringify(currentProfile, null, 2));
+            console.log('isChild:', currentProfile.isChild, 'tipo:', typeof currentProfile.isChild);
+            console.log('maxAgeRating:', currentProfile.restrictions.maxAgeRating);
+            console.log('=== FIM VERIFICAÇÃO ===');
             console.log('=== FILTRO DE PERFIL ATIVO ===');
             console.log('Perfil atual:', currentProfile);
             console.log('Restrições:', currentProfile.restrictions);
+            console.log('Total de itens antes do filtro:', base.length);
             
             const ageRatingOrder = ['L', '10', '12', '14', '16', '18'];
             const profileRatingIndex = ageRatingOrder.indexOf(currentProfile.restrictions.maxAgeRating);
             console.log('Índice da classificação do perfil:', profileRatingIndex, '(', currentProfile.restrictions.maxAgeRating, ')');
+            
+            let filteredCount = 0;
+            let blockedCount = 0;
             
             base = base.filter(s => {
                 const contentRating = s.ageRating || 'L';
@@ -82,36 +91,58 @@ const Catalog = () => {
                 
                 // Verificar classificação etária - conteúdo deve ser igual ou menor que o perfil
                 if (contentRatingIndex > profileRatingIndex) {
-                    console.log(`❌ BLOQUEANDO ${s.title}: ${contentRating} > ${currentProfile.restrictions.maxAgeRating}`);
+                    console.log(`❌ BLOQUEANDO ${s.title}: ${contentRating} > ${currentProfile.restrictions.maxAgeRating} (índice ${contentRatingIndex} > ${profileRatingIndex})`);
+                    blockedCount++;
+                    return false;
+                }
+                
+                // Verificação adicional para garantir que perfis infantis não vejam conteúdo inadequado
+                if (currentProfile.isChild === true && (contentRating === '14' || contentRating === '16' || contentRating === '18')) {
+                    console.log(`❌ BLOQUEANDO ${s.title}: perfil infantil não pode ver conteúdo ${contentRating}`);
+                    blockedCount++;
                     return false;
                 }
                 
                 // Para perfis infantis, aplicar restrições mais rigorosas
-                if (currentProfile.isChild) {
+                if (currentProfile.isChild === true) {
                     console.log('Perfil infantil detectado - aplicando restrições rigorosas');
+                    
+                    // Bloquear conteúdo 16+ e 18+ para perfis infantis
+                    if (contentRating === '16' || contentRating === '18') {
+                        console.log(`❌ BLOQUEANDO ${s.title}: conteúdo ${contentRating} não permitido para perfis infantis`);
+                        blockedCount++;
+                        return false;
+                    }
                     
                     // Verificar restrições específicas
                     if (s.hasViolence && !currentProfile.restrictions.allowViolence) {
                         console.log(`❌ BLOQUEANDO ${s.title}: violência não permitida`);
+                        blockedCount++;
                         return false;
                     }
                     
                     if (s.hasLanguage && !currentProfile.restrictions.allowLanguage) {
                         console.log(`❌ BLOQUEANDO ${s.title}: linguagem inadequada`);
+                        blockedCount++;
                         return false;
                     }
                     
                     if (s.hasAdultContent && !currentProfile.restrictions.allowAdultContent) {
                         console.log(`❌ BLOQUEANDO ${s.title}: conteúdo adulto`);
+                        blockedCount++;
                         return false;
                     }
                 }
                 
                 console.log(`✅ PERMITINDO ${s.title}: ${contentRating} <= ${currentProfile.restrictions.maxAgeRating}`);
+                filteredCount++;
                 return true;
             });
             
-            console.log('=== FIM DO FILTRO ===\n');
+            console.log(`=== FIM DO FILTRO ===`);
+            console.log(`Total bloqueado: ${blockedCount}`);
+            console.log(`Total permitido: ${filteredCount}`);
+            console.log(`Total final: ${base.length}\n`);
         }
         
         // Filtrar por tipo
@@ -370,7 +401,7 @@ const Catalog = () => {
                         transition: 'all 0.3s ease',
                         backdropFilter: colors.backdropBlur
                     }}>
-                        <MovieCard id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} duration={item.duration} videoUrl={item.videoUrl} rating={item.rating} />
+                                                 <MovieCard id={item.id} title={item.title} posterUrl={item.coverUrl} year={item.year} duration={item.duration} videoUrl={item.videoUrl} rating={item.rating} ageRating={item.ageRating} />
                         {user && (
                             <div style={{ padding: '16px' }}>
                                 <button 

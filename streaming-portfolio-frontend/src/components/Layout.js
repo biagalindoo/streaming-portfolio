@@ -1,5 +1,5 @@
 // src/components/Layout.js
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -11,17 +11,26 @@ const Layout = () => {
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [profiles, setProfiles] = useState([]);
     
-    // Se está logado mas não tem perfil ativo, mostra seletor de perfil
-    if (user && !currentProfile) {
-        return <ProfileSelector />;
-    }
-    
     // Carregar perfis quando o usuário está logado
     useEffect(() => {
         if (user && token) {
             fetchProfiles();
         }
     }, [user, token]);
+    
+    // Fechar menu quando clicar fora
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (showProfileMenu && !event.target.closest('.profile-menu-container')) {
+                setShowProfileMenu(false);
+            }
+        };
+        
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showProfileMenu]);
     
     const fetchProfiles = async () => {
         try {
@@ -58,6 +67,11 @@ const Layout = () => {
             console.error('Error switching profile:', err);
         }
     };
+    
+    // Se está logado mas não tem perfil ativo, mostra seletor de perfil
+    if (user && !currentProfile) {
+        return <ProfileSelector />;
+    }
     
     return (
         <div style={{ display: 'flex', minHeight: '100vh', background: colors.background }}>
@@ -120,7 +134,7 @@ const Layout = () => {
                             
                                                          {user ? (
                                  <>
-                                                                         <div style={{ position: 'relative' }}>
+                                                                         <div className="profile-menu-container" style={{ position: 'relative' }}>
                                         <button 
                                             onClick={() => setShowProfileMenu(!showProfileMenu)}
                                             style={{ 

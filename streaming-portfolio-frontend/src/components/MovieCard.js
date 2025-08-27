@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import AddToListButton from './AddToListButton';
 
-const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) => {
+const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating, ageRating }) => {
     const { colors } = useTheme();
     const { user } = useAuth();
     const handleWatch = (e) => {
@@ -183,6 +183,24 @@ const MovieCard = ({ id, title, posterUrl, year, duration, videoUrl, rating }) =
                             </span>
                         )}
                     </div>
+                    {ageRating && (
+                        <div style={{
+                            display: 'inline-block',
+                            background: ageRating === 'L' ? '#00ff00' : 
+                                       ageRating === '10' ? '#ffff00' : 
+                                       ageRating === '12' ? '#ffa500' : 
+                                       ageRating === '14' ? '#ff6600' : 
+                                       ageRating === '16' ? '#ff3300' : '#ff0000',
+                            color: ageRating === 'L' || ageRating === '10' ? '#000' : '#fff',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.7rem',
+                            fontWeight: 'bold',
+                            marginTop: '4px'
+                        }}>
+                            {ageRating === 'L' ? 'LIVRE' : `${ageRating} anos`}
+                        </div>
+                    )}
                 </div>
             </div>
         </Link>
